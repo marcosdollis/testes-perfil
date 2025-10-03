@@ -17,10 +17,8 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 # ALLOWED_HOSTS: aceita Railway e localhost
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
-# Aceita qualquer subdomínio do Railway
-if not DEBUG:
-    ALLOWED_HOSTS.append('.railway.app')
-    ALLOWED_HOSTS.append('.up.railway.app')
+# Sempre aceita Railway URLs (produção e desenvolvimento)
+ALLOWED_HOSTS.extend(['.railway.app', '.up.railway.app'])
 
 
 # Application definition
