@@ -20,6 +20,12 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(','
 # Sempre aceita Railway URLs (produção e desenvolvimento)
 ALLOWED_HOSTS.extend(['.railway.app', '.up.railway.app'])
 
+# CSRF: aceita origens HTTPS do Railway
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.railway.app',
+    'https://*.up.railway.app',
+]
+
 
 # Application definition
 
