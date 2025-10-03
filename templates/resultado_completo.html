@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+
+{% block title %}Seu Resultado Completo{% endblock %}
+
+{% block extra_style %}
+.resultado-completo-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.success-header {
+    text-align: center;
+    padding: 50px;
+    background: rgba(76, 175, 80, 0.3);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(76, 175, 80, 0.5);
+    margin-bottom: 40px;
+    animation: fadeIn 0.5s ease;
+}
+
+.success-header .icon {
+    font-size: 5rem;
+    display: block;
+    margin-bottom: 20px;
+    animation: bounce 1s ease;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-30px); }
+}
+
+.success-header h2 {
+    font-size: 2.5rem;
+    color: #48bb78;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.resultado-completo {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 50px;
+    border: 2px solid rgba(99, 179, 237, 0.5);
+    margin-bottom: 30px;
+    animation: fadeInUp 0.8s ease;
+}
+
+.resultado-completo h3 {
+    font-size: 2rem;
+    color: #63b3ed;
+    margin-bottom: 30px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.resultado-completo p {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    margin-bottom: 15px;
+    white-space: pre-wrap;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+.resultado-completo strong {
+    color: #63b3ed;
+    font-weight: 700;
+}
+
+.divider {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #ffd700, transparent);
+    margin: 40px 0;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 40px;
+    flex-wrap: wrap;
+}
+
+.action-buttons .btn {
+    padding: 15px 30px;
+}
+
+.share-section {
+    text-align: center;
+    margin-top: 50px;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+}
+
+.share-section h3 {
+    color: #ffd700;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.share-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.share-btn {
+    padding: 12px 25px;
+    border-radius: 50px;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    color: white;
+}
+
+.share-btn.whatsapp {
+    background: #25d366;
+}
+
+.share-btn.facebook {
+    background: #1877f2;
+}
+
+.share-btn.twitter {
+    background: #1da1f2;
+}
+
+.share-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+{% endblock %}
+
+{% block content %}
+<div class="resultado-completo-container">
+    <div class="success-header">
+        <span class="icon">✅</span>
+        <h2>Pagamento Confirmado!</h2>
+        <p style="font-size: 1.1rem;">Seu resultado completo está disponível abaixo</p>
+    </div>
+
+    <div class="resultado-completo">
+        <h3>{{ config.icone }} {{ config.titulo }} {{ config.icone }}</h3>
+        
+        <div class="divider"></div>
+        
+        <div style="text-align: left;">
+            <p>{{ resultado.completo }}</p>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <p style="text-align: center; font-style: italic; opacity: 0.9; margin-top: 40px; font-family: 'Segoe UI', sans-serif;">
+            ✨ Releia este relatório sempre que precisar de motivação e clareza sobre seu caminho ✨
+        </p>
+    </div>
+
+    <div class="action-buttons">
+        <button onclick="window.print()" class="btn">
+            🖨️ Imprimir Resultado
+        </button>
+        <a href="{% url 'testes:home' %}" class="btn" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+            🔮 Fazer Outro Teste
+        </a>
+    </div>
+
+    <div class="share-section">
+        <h3>Compartilhe com seus amigos!</h3>
+        <p style="opacity: 0.9;">Ajude outras pessoas a descobrirem seus mistérios</p>
+        
+        <div class="share-buttons">
+            <a href="https://wa.me/?text=Acabei de descobrir coisas incríveis sobre mim! Faça você também: [SEU-SITE]" 
+               target="_blank" class="share-btn whatsapp">
+                📱 WhatsApp
+            </a>
+            <a href="https://www.facebook.com/sharer/sharer.php?u=[SEU-SITE]" 
+               target="_blank" class="share-btn facebook">
+                📘 Facebook
+            </a>
+            <a href="https://twitter.com/intent/tweet?text=Descobri coisas surpreendentes sobre mim! Faça você também: [SEU-SITE]" 
+               target="_blank" class="share-btn twitter">
+                🐦 Twitter
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

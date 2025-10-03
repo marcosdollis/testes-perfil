@@ -1,0 +1,307 @@
+{% extends 'base.html' %}
+
+{% block title %}Seu Resultado Místico{% endblock %}
+
+{% block extra_style %}
+.resultado-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.resultado-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 50px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 215, 0, 0.5);
+    animation: fadeIn 1s ease;
+}
+
+.resultado-header .icon {
+    font-size: 6rem;
+    display: block;
+    margin-bottom: 20px;
+    animation: rotate 4s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.resultado-header h2 {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    color: #ffd700;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
+}
+
+.resultado-preview {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 40px;
+    margin-bottom: 30px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.resultado-preview::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, transparent 30%, rgba(255, 215, 0, 0.1) 50%, transparent 70%);
+    animation: shine 3s infinite;
+}
+
+@keyframes shine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.resultado-preview p {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    position: relative;
+    z-index: 1;
+}
+
+.blur-section {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 60px 40px;
+    margin: 40px 0;
+    border: 2px dashed rgba(255, 215, 0, 0.5);
+    text-align: center;
+    position: relative;
+}
+
+.blur-section::before {
+    content: '🔒';
+    font-size: 4rem;
+    display: block;
+    margin-bottom: 20px;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+.blur-section h3 {
+    font-size: 2rem;
+    color: #ffd700;
+    margin-bottom: 20px;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+}
+
+.blur-section p {
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+    opacity: 0.9;
+}
+
+.price-tag {
+    display: inline-block;
+    background: linear-gradient(135deg, #4299e1, #3182ce);
+    color: #fff;
+    padding: 15px 30px;
+    border-radius: 10px;
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 20px 0;
+    box-shadow: 0 4px 20px rgba(66, 153, 225, 0.4);
+}
+
+.benefits {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 40px;
+    margin: 30px 0;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.benefits h3 {
+    font-size: 1.8rem;
+    color: #63b3ed;
+    margin-bottom: 25px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.benefits ul {
+    list-style: none;
+    padding: 0;
+}
+
+.benefits li {
+    padding: 15px;
+    margin-bottom: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    border-left: 4px solid #4299e1;
+    font-size: 1.1rem;
+    animation: slideInRight 0.5s ease;
+}
+
+.benefits li::before {
+    content: '✅ ';
+    margin-right: 10px;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.cta-section {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.cta-section .btn {
+    font-size: 1.5rem;
+    padding: 25px 60px;
+    animation: glow 2s ease-in-out infinite;
+}
+
+.testimonials {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 40px;
+    margin: 40px 0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.testimonials h3 {
+    font-size: 1.8rem;
+    color: #63b3ed;
+    margin-bottom: 30px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.testimonial {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    border-left: 3px solid #4299e1;
+}
+
+.testimonial p {
+    font-style: italic;
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+
+.testimonial .author {
+    text-align: right;
+    color: #63b3ed;
+    font-weight: 600;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+{% endblock %}
+
+{% block content %}
+<div class="resultado-container">
+    <div class="resultado-header">
+        <span class="icon">{{ config.icone }}</span>
+        <h2>✨ Sua Revelação Está Pronta! ✨</h2>
+        <p style="font-size: 1.1rem; opacity: 0.9;">{{ config.titulo }}</p>
+    </div>
+
+    <div class="resultado-preview">
+        <h3 style="color: #ffd700; font-size: 1.8rem; margin-bottom: 20px; text-align: center;">
+            🔮 Prévia do Seu Resultado Místico
+        </h3>
+        <p>{{ resultado.preview }}</p>
+    </div>
+
+    <div class="blur-section">
+        <h3>Desbloqueie Sua Revelação Completa</h3>
+        <p>Veja sua análise detalhada e completa...</p>
+        <p style="font-size: 1.2rem; color: #63b3ed;">
+            Apenas <span class="price-tag">R$ 4,99</span>
+        </p>
+        <p style="font-size: 0.95rem; opacity: 0.8; margin-top: 20px;">
+            Pagamento único • Acesso imediato • 100% seguro
+        </p>
+    </div>
+
+    <div class="benefits">
+        <h3>✨ O Que Você Receberá:</h3>
+        <ul>
+            <li>Análise completa e personalizada de mais de 2.500 palavras</li>
+            <li>Relatório profissional baseado em suas respostas únicas</li>
+            <li>Identificação detalhada dos seus talentos naturais</li>
+            <li>Plano de ação personalizado para próximos 30, 90 e 365 dias</li>
+            <li>Lista de carreiras ideais com potencial de renda</li>
+            <li>Compatibilidade com outros perfis de personalidade</li>
+            <li>Recomendações de livros, cursos e ferramentas específicas para você</li>
+            <li>Estratégias práticas para desenvolvimento pessoal</li>
+            <li>Análise de pontos fortes e áreas de crescimento</li>
+            <li>Acesso vitalício ao seu resultado completo (PDF disponível)</li>
+        </ul>
+    </div>
+
+    <div class="testimonials">
+        <h3>⭐ O Que Dizem Nossos Usuários:</h3>
+        
+        <div class="testimonial">
+            <p>"Caramba! Recebi um relatório de 10 páginas super detalhado. Parece que alguém me conhece melhor do que eu mesmo. Valeu MUITO mais que os R$ 4,99!"</p>
+            <p class="author">- Carlos M., Desenvolvedor</p>
+        </div>
+
+        <div class="testimonial">
+            <p>"Estava em dúvida sobre minha carreira e este teste me deu uma clareza incrível. O relatório é tão completo que imprimi e coloquei na parede. Melhor investimento que fiz este ano!"</p>
+            <p class="author">- Juliana R., Estudante de Engenharia</p>
+        </div>
+
+        <div class="testimonial">
+            <p>"No início pensei 'mais um teste de internet', mas o resultado me surpreendeu totalmente. É MUITO específico e prático. Compartilhei com meus amigos e já 3 fizeram!"</p>
+            <p class="author">- Roberto S., Empresário</p>
+        </div>
+
+        <div class="testimonial">
+            <p>"Fiz terapia por 6 meses e aprendi menos sobre mim do que com este relatório. Sério, é assustador como acertou detalhes da minha personalidade. Vale MUITO a pena!"</p>
+            <p class="author">- Amanda L., Designer</p>
+        </div>
+    </div>
+
+    <div class="cta-section">
+        <p style="font-size: 1.4rem; margin-bottom: 20px; font-weight: 600;">
+            � Você investiu seu tempo respondendo 15 perguntas...
+        </p>
+        <p style="font-size: 1.2rem; margin-bottom: 30px; opacity: 0.9;">
+            Por apenas R$ 4,99 você terá acesso a um relatório profissional completo que pessoas pagam R$ 200+ em consultorias psicológicas
+        </p>
+        <a href="{% url 'testes:pagamento' resposta_id %}" class="btn">
+            🔓 Liberar Meu Relatório Completo Agora
+        </a>
+        <p style="font-size: 0.85rem; margin-top: 20px; opacity: 0.7;">
+            ⚡ Mais de 15.847 pessoas já investiram em autoconhecimento • Classificação 4.8/5.0
+        </p>
+    </div>
+</div>
+{% endblock %}

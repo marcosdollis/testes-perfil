@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}Escolha Seu Teste Místico{% endblock %}
+
+{% block extra_style %}
+.tests-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.test-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.4s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.test-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.test-card:hover::before {
+    left: 100%;
+}
+
+.test-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(66, 153, 225, 0.3);
+    border-color: rgba(99, 179, 237, 0.5);
+}
+
+.test-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    display: block;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.test-card h2 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #63b3ed;
+    font-weight: 600;
+}
+
+.test-card p {
+    font-size: 1rem;
+    opacity: 0.9;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.test-card .btn {
+    margin-top: 10px;
+}
+
+.intro-text {
+    text-align: center;
+    font-size: 1.3rem;
+    margin-bottom: 30px;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+{% endblock %}
+
+{% block content %}
+<div class="intro-text">
+    <p>� Bem-vindo à plataforma de testes de personalidade �</p>
+    <p style="font-size: 1rem; margin-top: 15px; opacity: 0.9;">
+        Escolha um teste abaixo e descubra mais sobre você mesmo com análises detalhadas
+    </p>
+</div>
+
+<div class="tests-grid">
+    {% for teste in testes %}
+    <div class="test-card" onclick="window.location.href='{% url 'testes:teste' teste.tipo %}'">
+        <span class="test-icon">{{ teste.icone }}</span>
+        <h2>{{ teste.titulo }}</h2>
+        <p>{{ teste.descricao }}</p>
+        <a href="{% url 'testes:teste' teste.tipo %}" class="btn">Iniciar Teste ✨</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

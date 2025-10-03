@@ -1,0 +1,44 @@
+# ⚙️ VARIÁVEIS DE AMBIENTE PARA O RAILWAY
+
+Cole estas variáveis na seção "Variables" do seu projeto no Railway:
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## 🔑 SECRET_KEY (OBRIGATÓRIO)
+SECRET_KEY=u1&f1u_@c@mzkw4-2&+u#%9v%_f0e%6!$f3ov+yp0py0626y_4
+
+## 🐛 DEBUG (OBRIGATÓRIO)
+DEBUG=False
+
+## 🌐 ALLOWED_HOSTS (OBRIGATÓRIO)
+ALLOWED_HOSTS=*.railway.app,seudominio.com.br
+
+## 💾 DATABASE_PATH (Para SQLite persistente)
+DATABASE_PATH=/app/data/db.sqlite3
+
+## 🐍 PYTHONUNBUFFERED (Recomendado)
+PYTHONUNBUFFERED=1
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## 📝 COMO ADICIONAR NO RAILWAY:
+
+1. No seu projeto do Railway, clique em "Variables"
+2. Clique em "New Variable"
+3. Cole cada linha acima (formato: CHAVE=valor)
+4. Salve
+
+## ⚠️ IMPORTANTE:
+
+- Após adicionar as variáveis, o Railway vai fazer redeploy automático
+- Aguarde ~2-3 minutos para o deploy completar
+- Acesse seu site e teste!
+
+## 🔄 DEPOIS DO PRIMEIRO DEPLOY:
+
+Se você registrar um domínio customizado (ex: meustestes.com.br):
+1. Volte em "Variables"
+2. Atualize ALLOWED_HOSTS para: *.railway.app,meustestes.com.br
+3. Configure o DNS do seu domínio apontando para o Railway
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

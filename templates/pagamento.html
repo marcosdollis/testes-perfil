@@ -1,0 +1,263 @@
+{% extends 'base.html' %}
+
+{% block title %}Pagamento Seguro{% endblock %}
+
+{% block extra_style %}
+.pagamento-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.pagamento-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 40px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    animation: fadeIn 0.5s ease;
+}
+
+.pagamento-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.pagamento-header h2 {
+    font-size: 2rem;
+    color: #ffd700;
+    margin-bottom: 15px;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+}
+
+.price-display {
+    text-align: center;
+    margin: 30px 0;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    border: 2px solid rgba(255, 215, 0, 0.5);
+}
+
+.price-display .valor {
+    font-size: 3rem;
+    color: #ffd700;
+    font-weight: bold;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+.payment-methods {
+    margin: 30px 0;
+}
+
+.payment-method {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+}
+
+.payment-method:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 215, 0, 0.6);
+    transform: translateX(5px);
+}
+
+.payment-method input[type="radio"] {
+    margin-right: 15px;
+    width: 20px;
+    height: 20px;
+    accent-color: #ffd700;
+}
+
+.payment-method label {
+    cursor: pointer;
+    flex: 1;
+    font-size: 1.1rem;
+}
+
+.payment-method.selected {
+    background: rgba(255, 215, 0, 0.2);
+    border-color: #ffd700;
+}
+
+.security-badge {
+    text-align: center;
+    margin: 30px 0;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 15px;
+}
+
+.security-badge p {
+    font-size: 0.95rem;
+    opacity: 0.9;
+    margin: 5px 0;
+}
+
+.guarantee {
+    text-align: center;
+    margin: 30px 0;
+    padding: 25px;
+    background: rgba(76, 175, 80, 0.2);
+    border-radius: 15px;
+    border: 2px solid rgba(76, 175, 80, 0.5);
+}
+
+.guarantee h3 {
+    color: #4caf50;
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+}
+
+.btn-pagar {
+    width: 100%;
+    padding: 25px;
+    font-size: 1.5rem;
+    margin-top: 30px;
+    animation: glow 2s ease-in-out infinite;
+}
+
+.back-link {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: #fff;
+    text-decoration: none;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.back-link:hover {
+    opacity: 1;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+{% endblock %}
+
+{% block content %}
+<div class="pagamento-container">
+    <div class="pagamento-card">
+        <div class="pagamento-header">
+            <h2>🔐 Últimos Passos Para Seu Relatório</h2>
+            <p>Complete seu pedido e receba seu relatório completo imediatamente</p>
+        </div>
+
+        <div class="price-display">
+            <p style="font-size: 1rem; margin-bottom: 10px; opacity: 0.7; text-decoration: line-through;">De R$ 49,90</p>
+            <p style="font-size: 1.1rem; margin-bottom: 10px; opacity: 0.9;">Oferta especial por tempo limitado</p>
+            <p class="valor">R$ 4,99</p>
+            <p style="font-size: 0.9rem; margin-top: 10px; opacity: 0.8;">Acesso vitalício ao seu resultado completo</p>
+            <p style="font-size: 0.85rem; margin-top: 5px; color: #48bb78; font-weight: 600;">✓ Economia de 90% • Relatório de 2.500+ palavras</p>
+        </div>
+
+        <form method="POST" id="paymentForm">
+            {% csrf_token %}
+            
+            <div class="payment-methods">
+                <h3 style="color: #ffd700; margin-bottom: 20px; font-size: 1.3rem;">Escolha a forma de pagamento:</h3>
+                
+                <div class="payment-method" onclick="selectPayment(this)">
+                    <input type="radio" name="payment_method" value="pix" id="pix" checked>
+                    <label for="pix">
+                        <strong>PIX</strong> - Aprovação imediata<br>
+                        <small style="opacity: 0.8;">Mais rápido e prático</small>
+                    </label>
+                </div>
+
+                <div class="payment-method" onclick="selectPayment(this)">
+                    <input type="radio" name="payment_method" value="credito" id="credito">
+                    <label for="credito">
+                        <strong>Cartão de Crédito</strong><br>
+                        <small style="opacity: 0.8;">Parcelamento disponível</small>
+                    </label>
+                </div>
+
+                <div class="payment-method" onclick="selectPayment(this)">
+                    <input type="radio" name="payment_method" value="boleto" id="boleto">
+                    <label for="boleto">
+                        <strong>Boleto Bancário</strong><br>
+                        <small style="opacity: 0.8;">Aprovação em até 2 dias úteis</small>
+                    </label>
+                </div>
+            </div>
+
+            <div class="security-badge">
+                <p><strong>🔒 Pagamento 100% Seguro</strong></p>
+                <p>Seus dados são criptografados e protegidos</p>
+                <p>Certificado SSL • PCI Compliance • Processamento Seguro</p>
+            </div>
+
+            <div style="background: rgba(66, 153, 225, 0.2); padding: 20px; border-radius: 15px; margin: 20px 0; border-left: 4px solid #4299e1;">
+                <p style="font-weight: 600; margin-bottom: 10px;">⚡ O que você recebe IMEDIATAMENTE após o pagamento:</p>
+                <p style="font-size: 0.95rem; opacity: 0.9; line-height: 1.6;">
+                    ✓ Relatório completo de 2.500+ palavras<br>
+                    ✓ Análise detalhada do seu perfil psicológico<br>
+                    ✓ Plano de ação personalizado (30/90/365 dias)<br>
+                    ✓ Lista de carreiras ideais para você<br>
+                    ✓ Recomendações de livros e cursos específicos<br>
+                    ✓ Acesso para sempre (pode imprimir ou salvar em PDF)
+                </p>
+            </div>
+
+            <div class="guarantee">
+                <h3>✅ Garantia de 7 Dias</h3>
+                <p>Se não ficar 100% satisfeito, devolvemos seu dinheiro sem perguntas</p>
+                <p style="font-size: 0.9rem; margin-top: 10px; opacity: 0.9;">Nossa taxa de satisfação é de 98,4% - Você vai adorar!</p>
+            </div>
+
+            <button type="submit" class="btn btn-pagar">
+                🔓 Finalizar e Desbloquear Agora
+            </button>
+
+            <p style="text-align: center; font-size: 0.85rem; margin-top: 20px; opacity: 0.7;">
+                Ao finalizar, você concorda com nossos <a href="#" style="color: #ffd700;">Termos de Uso</a>
+            </p>
+        </form>
+
+        <a href="{% url 'testes:resultado' resposta_id %}" class="back-link">
+            ← Voltar ao resultado preview
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_script %}
+function selectPayment(element) {
+    const radio = element.querySelector('input[type="radio"]');
+    radio.checked = true;
+    
+    const methods = document.querySelectorAll('.payment-method');
+    methods.forEach(method => method.classList.remove('selected'));
+    
+    element.classList.add('selected');
+}
+
+// Select first payment method on load
+document.addEventListener('DOMContentLoaded', function() {
+    const firstMethod = document.querySelector('.payment-method');
+    if (firstMethod) {
+        firstMethod.classList.add('selected');
+    }
+});
+
+// Add loading state on form submit
+document.getElementById('paymentForm').addEventListener('submit', function(e) {
+    const btn = this.querySelector('.btn-pagar');
+    btn.innerHTML = '⏳ Processando pagamento...';
+    btn.disabled = true;
+});
+{% endblock %}
