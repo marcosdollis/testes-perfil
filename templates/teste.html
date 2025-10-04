@@ -438,8 +438,8 @@ function showQuestion(index) {
     const currentAnswer = answers[currentQuestion];
     document.getElementById('nextBtn').disabled = !currentAnswer && currentAnswer !== 0;
     
-    // Show email and submit on last question
-    if (currentQuestion === totalQuestions - 1 && answers[currentQuestion]) {
+    // Show email and submit on last question if answered
+    if (currentQuestion === totalQuestions - 1 && answers[currentQuestion] !== undefined) {
         document.getElementById('emailGroup').style.display = 'block';
         document.getElementById('nextBtn').style.display = 'none';
         document.getElementById('submitBtn').classList.add('show');
