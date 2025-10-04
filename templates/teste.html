@@ -10,8 +10,8 @@
 
 .teste-header {
     text-align: center;
-    margin-bottom: 40px;
-    padding: 40px;
+    margin-bottom: 30px;
+    padding: 30px 20px;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 20px;
     backdrop-filter: blur(10px);
@@ -19,9 +19,9 @@
 }
 
 .teste-header .icon {
-    font-size: 5rem;
+    font-size: 3rem;
     display: block;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     animation: pulse 2s ease-in-out infinite;
 }
 
@@ -31,23 +31,29 @@
 }
 
 .teste-header h2 {
-    font-size: 2rem;
-    margin-bottom: 15px;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
     color: #ffd700;
     text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+}
+
+.teste-header p {
+    font-size: 0.95rem;
+    margin: 0;
 }
 
 .teste-form {
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(10px);
     border-radius: 20px;
-    padding: 40px;
+    padding: 30px 20px;
     border: 2px solid rgba(255, 255, 255, 0.2);
     min-height: 400px;
+    scroll-margin-top: 20px;
 }
 
 .form-group {
-    margin-bottom: 35px;
+    margin-bottom: 25px;
     animation: fadeIn 0.5s ease;
     display: none;
 }
@@ -266,6 +272,66 @@
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+/* MELHORIAS MOBILE - UX OTIMIZADA */
+@media (max-width: 768px) {
+    .teste-header {
+        padding: 20px 15px;
+        margin-bottom: 20px;
+    }
+    
+    .teste-header .icon {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+    }
+    
+    .teste-header h2 {
+        font-size: 1.3rem;
+        margin-bottom: 8px;
+    }
+    
+    .teste-header p {
+        font-size: 0.85rem;
+    }
+    
+    .teste-form {
+        padding: 20px 15px;
+        min-height: auto;
+    }
+    
+    .form-group label {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+        line-height: 1.5;
+    }
+    
+    .opcao {
+        padding: 15px;
+    }
+    
+    .opcao label {
+        font-size: 0.95rem;
+    }
+    
+    .navigation-buttons {
+        gap: 10px;
+        margin-top: 20px;
+    }
+    
+    .nav-btn {
+        padding: 12px 20px;
+        font-size: 1rem;
+    }
+    
+    .progress-bar {
+        margin-bottom: 20px;
+        height: 25px;
+    }
+    
+    .progress-text {
+        font-size: 0.9rem;
+    }
+}
 {% endblock %}
 
 {% block content %}
@@ -351,6 +417,20 @@ function selectOption(element) {
     document.getElementById('nextBtn').disabled = false;
     
     updateProgress();
+    
+    // Auto-avançar para próxima após 500ms (melhor UX)
+    if (currentQuestion < totalQuestions - 1) {
+        setTimeout(() => {
+            nextQuestion();
+        }, 400);
+    } else {
+        // Na última pergunta, mostrar email
+        setTimeout(() => {
+            document.getElementById('emailGroup').style.display = 'block';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('submitBtn').classList.add('show');
+        }, 300);
+    }
 }
 
 function showQuestion(index) {
@@ -382,8 +462,11 @@ function showQuestion(index) {
         document.getElementById('submitBtn').classList.remove('show');
     }
     
-    // Scroll to top smoothly
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Scroll to form top smoothly (melhor UX mobile)
+    const testeForm = document.getElementById('testeForm');
+    const yOffset = -20; // 20px de margem
+    const y = testeForm.getBoundingClientRect().top + window.pageYOffset + yOffset;
+    window.scrollTo({ top: y, behavior: 'smooth' });
 }
 
 function nextQuestion() {
