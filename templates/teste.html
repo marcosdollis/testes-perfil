@@ -328,9 +328,52 @@
 {% endblock %}
 
 {% block extra_script %}
+const tipoTeste = '{{ tipo }}';
+const storageKey = `teste_${tipoTeste}_progress`;
 let currentQuestion = 0;
 const totalQuestions = {{ config.perguntas|length }};
 const answers = {};
+
+// Carregar progresso salvo do localStorage
+function loadProgress() {
+    const saved = localStorage.getItem(storageKey);
+    if (saved) {
+        try {
+            const data = JSON.parse(saved);
+            Object.assign(answers, data.answers || {});
+            currentQuestion = data.currentQuestion || 0;
+            
+            // Marcar as respostas salvas
+            Object.keys(answers).forEach(questionIndex => {
+                const radio = document.querySelector(`input[name="pergunta_${questionIndex}"][value="${answers[questionIndex]}"]`);
+                if (radio) {
+                    radio.checked = true;
+                    radio.closest('.opcao').classList.add('selected');
+                }
+            });
+            
+            return true;
+        } catch (e) {
+            console.error('Erro ao carregar progresso:', e);
+        }
+    }
+    return false;
+}
+
+// Salvar progresso no localStorage
+function saveProgress() {
+    const data = {
+        answers: answers,
+        currentQuestion: currentQuestion,
+        timestamp: new Date().toISOString()
+    };
+    localStorage.setItem(storageKey, JSON.stringify(data));
+}
+
+// Limpar progresso salvo
+function clearProgress() {
+    localStorage.removeItem(storageKey);
+}
 
 function selectOption(element) {
     const radio = element.querySelector('input[type="radio"]');
@@ -346,6 +389,9 @@ function selectOption(element) {
     // Store answer
     const questionIndex = document.querySelector('.form-group.active').dataset.question;
     answers[questionIndex] = radio.value;
+    
+    // Salvar progresso
+    saveProgress();
     
     // Enable next button
     document.getElementById('nextBtn').disabled = false;
@@ -382,19 +428,28 @@ function showQuestion(index) {
         document.getElementById('submitBtn').classList.remove('show');
     }
     
-    // Scroll to top smoothly
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Scroll suave para o início do formulário (melhor UX mobile)
+    setTimeout(() => {
+        const testeForm = document.getElementById('testeForm');
+        if (testeForm) {
+            const yOffset = -20; // 20px de margem do topo
+            const y = testeForm.getBoundingClientRect().top + window.pageYOffset + yOffset;
+            window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+        }
+    }, 100); // Pequeno delay para garantir que a pergunta foi renderizada
 }
 
 function nextQuestion() {
     if (currentQuestion < totalQuestions - 1) {
         showQuestion(currentQuestion + 1);
+        saveProgress(); // Salvar quando mudar de questão
     }
 }
 
 function previousQuestion() {
     if (currentQuestion > 0) {
         showQuestion(currentQuestion - 1);
+        saveProgress(); // Salvar quando mudar de questão
     }
 }
 
@@ -421,11 +476,17 @@ document.getElementById('testeForm').addEventListener('submit', function(e) {
         alert('Por favor, insira seu e-mail para receber o resultado!');
         return false;
     }
+    // Limpar progresso salvo ao enviar o teste
+    clearProgress();
 });
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
-    showQuestion(0);
+    // Tentar carregar progresso salvo
+    const hasProgress = loadProgress();
+    
+    // Mostrar questão atual (pode ser a última respondida)
+    showQuestion(currentQuestion);
     updateProgress();
     
     // Restore selected options if any
