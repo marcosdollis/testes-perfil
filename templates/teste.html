@@ -417,20 +417,7 @@ function selectOption(element) {
     document.getElementById('nextBtn').disabled = false;
     
     updateProgress();
-    
-    // Auto-avançar para próxima após 500ms (melhor UX)
-    if (currentQuestion < totalQuestions - 1) {
-        setTimeout(() => {
-            nextQuestion();
-        }, 400);
-    } else {
-        // Na última pergunta, mostrar email
-        setTimeout(() => {
-            document.getElementById('emailGroup').style.display = 'block';
-            document.getElementById('nextBtn').style.display = 'none';
-            document.getElementById('submitBtn').classList.add('show');
-        }, 300);
-    }
+}
 }
 
 function showQuestion(index) {
