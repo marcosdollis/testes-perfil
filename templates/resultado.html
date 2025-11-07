@@ -72,6 +72,36 @@
     z-index: 1;
 }
 
+/* Estilos específicos para resultados astrológicos */
+.zodiac-result {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.zodiac-sign {
+    font-size: 4rem;
+    margin: 20px 0;
+    animation: glow 2s ease-in-out infinite;
+}
+
+.element-icon {
+    font-size: 2.5rem;
+    margin: 15px 0;
+}
+
+.element-water { color: #00ffff; }
+.element-fire { color: #ff4d4d; }
+.element-earth { color: #90EE90; }
+.element-air { color: #87CEEB; }
+
+@keyframes glow {
+    0%, 100% { text-shadow: 0 0 20px rgba(255, 215, 0, 0.7); }
+    50% { text-shadow: 0 0 40px rgba(255, 215, 0, 0.9); }
+}
+
 .blur-section {
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);

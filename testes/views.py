@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
+from .models import Resposta
 import json
 import random
 
@@ -1012,6 +1013,76 @@ Metodologia psicométrica validada
     return resultado
 
 TESTES_CONFIG = {
+    'signo_oculto': {
+        'titulo': 'Descubra Seu Verdadeiro Signo Espiritual',
+        'descricao': 'Revele seu signo oculto e compreenda sua verdadeira natureza espiritual através de uma análise profunda.',
+        'icone': '✨',
+        'perguntas': [
+            # Bloco 1: Temperamento e Personalidade
+            {'pergunta': 'Como você descreveria sua energia pessoal?', 
+             'opcoes': ['Intensa e dinâmica', 'Estável e constante', 'Leve e mutável', 'Profunda e fluida']},
+            
+            {'pergunta': 'Como você geralmente aborda novos desafios?', 
+             'opcoes': ['Com planejamento cuidadoso', 'Com curiosidade intelectual', 'Com intuição e sensibilidade', 'Com entusiasmo e coragem']},
+            
+            {'pergunta': 'Como você processa suas emoções?', 
+             'opcoes': ['Sinto profundamente', 'Analiso racionalmente', 'Expresso intensamente', 'Processo mentalmente']},
+            
+            {'pergunta': 'Ao tomar decisões importantes, você:', 
+             'opcoes': ['Analisa todos os detalhes', 'Confia nos sentimentos', 'Pensa nos prós e contras', 'Segue seus instintos']},
+            
+            {'pergunta': 'Em relacionamentos, você tende a ser:', 
+             'opcoes': ['Profundo e intenso', 'Leal e estável', 'Apaixonado e direto', 'Sociável e adaptável']},
+            
+            # Bloco 2: Espiritualidade e Intuição
+            {'pergunta': 'Qual ambiente natural mais te energiza?', 
+             'opcoes': ['Montanhas', 'Oceano', 'Deserto', 'Floresta']},
+            
+            {'pergunta': 'Como você se conecta com sua espiritualidade?', 
+             'opcoes': ['Meditação silenciosa', 'Rituais práticos', 'Estudos filosóficos', 'Expressão criativa']},
+            
+            {'pergunta': 'Sua intuição geralmente se manifesta através de:', 
+             'opcoes': ['Sensações físicas', 'Sonhos e visões', 'Pensamentos súbitos', 'Emoções intensas']},
+            
+            {'pergunta': 'Qual aspecto da vida mais te fascina?', 
+             'opcoes': ['Mistérios do universo', 'Conexões humanas', 'Conhecimento ancestral', 'Transformação pessoal']},
+            
+            {'pergunta': 'Em momentos de crise, você busca:', 
+             'opcoes': ['Orientação interior', 'Ajuda prática', 'Conhecimento', 'Ação imediata']},
+            
+            # Bloco 3: Propósito e Missão
+            {'pergunta': 'Qual você sente que é seu dom natural?', 
+             'opcoes': ['Curar e confortar', 'Ensinar e guiar', 'Criar e inspirar', 'Transformar e liderar']},
+            
+            {'pergunta': 'O que mais te motiva na vida?', 
+             'opcoes': ['Crescimento espiritual', 'Realização material', 'Conhecimento', 'Liberdade']},
+            
+            {'pergunta': 'Como você prefere ajudar os outros?', 
+             'opcoes': ['Ouvindo e aconselhando', 'Ações práticas', 'Compartilhando conhecimento', 'Inspirando mudanças']},
+            
+            {'pergunta': 'Qual palavra melhor descreve seu propósito?', 
+             'opcoes': ['Curar', 'Construir', 'Ensinar', 'Transformar']},
+            
+            {'pergunta': 'O que você mais valoriza?', 
+             'opcoes': ['Harmonia', 'Verdade', 'Liberdade', 'Sabedoria']},
+            
+            # Bloco 4: Ciclos e Mudanças
+            {'pergunta': 'Como você lida com mudanças?', 
+             'opcoes': ['Flui naturalmente', 'Resiste inicialmente', 'Adapta-se rapidamente', 'Busca controlá-las']},
+            
+            {'pergunta': 'Qual estação mais reflete sua personalidade?', 
+             'opcoes': ['Inverno', 'Primavera', 'Verão', 'Outono']},
+            
+            {'pergunta': 'Em que momento do dia você se sente mais energizado?', 
+             'opcoes': ['Amanhecer', 'Meio-dia', 'Entardecer', 'Noite']},
+            
+            {'pergunta': 'Como você vê os ciclos da vida?', 
+             'opcoes': ['Como aprendizado', 'Como evolução', 'Como transformação', 'Como jornada']},
+            
+            {'pergunta': 'O que mais te ajuda em momentos difíceis?', 
+             'opcoes': ['Meditação', 'Ação prática', 'Estudo', 'Movimento']}
+        ]
+    },
     'teste_qi': {
         'titulo': 'Teste de QI Completo',
         'descricao': 'Avalie seu quociente de inteligência através de questões de lógica e raciocínio.',
@@ -1415,6 +1486,393 @@ Válido permanentemente como referência pessoal
     }
 }
 
+def analisar_signo(respostas):
+    """Analisa as respostas e determina o perfil astrológico espiritual"""
+    # Mapeia características astrológicas
+    elementos = {
+        'fogo': 0,
+        'terra': 0,
+        'ar': 0,
+        'agua': 0
+    }
+    
+    # Análise baseada nas respostas
+    for i, resp in respostas.items():
+        idx = int(i.split('_')[1])
+        opcao = int(resp) if resp.isdigit() else 0
+        
+        # BLOCO 1: Temperamento e Personalidade
+        if idx == 0:  # Energia
+            if opcao == 0: elementos['fogo'] += 3
+            elif opcao == 1: elementos['terra'] += 3
+            elif opcao == 2: elementos['ar'] += 3
+            else: elementos['agua'] += 3
+            
+        elif idx == 1:  # Abordagem
+            if opcao == 0: elementos['terra'] += 3
+            elif opcao == 1: elementos['ar'] += 3
+            elif opcao == 2: elementos['agua'] += 3
+            else: elementos['fogo'] += 3
+            
+        elif idx == 2:  # Emoções
+            if opcao == 0: elementos['agua'] += 3
+            elif opcao == 1: elementos['terra'] += 3
+            elif opcao == 2: elementos['fogo'] += 3
+            else: elementos['ar'] += 3
+            
+        elif idx == 3:  # Decisões
+            if opcao == 0: elementos['terra'] += 3
+            elif opcao == 1: elementos['agua'] += 3
+            elif opcao == 2: elementos['ar'] += 3
+            else: elementos['fogo'] += 3
+            
+        elif idx == 4:  # Relações
+            if opcao == 0: elementos['agua'] += 3
+            elif opcao == 1: elementos['terra'] += 3
+            elif opcao == 2: elementos['fogo'] += 3
+            else: elementos['ar'] += 3
+    
+    # Determina elemento dominante
+    elemento_dominante = max(elementos.items(), key=lambda x: x[1])[0]
+    
+    # Mapeia signos por elemento
+    signos = {
+        'fogo': ['Áries', 'Leão', 'Sagitário'],
+        'terra': ['Touro', 'Virgem', 'Capricórnio'],
+        'ar': ['Gêmeos', 'Libra', 'Aquário'],
+        'agua': ['Câncer', 'Escorpião', 'Peixes']
+    }
+    
+    # Escolhe um signo baseado no elemento dominante
+    signo_espiritual = random.choice(signos[elemento_dominante])
+    
+    return {
+        'signo': signo_espiritual,
+        'elemento': elemento_dominante,
+        'elementos': elementos
+    }
+
+def gerar_preview_signo(analise):
+    """Gera um preview variado para o teste de signo espiritual"""
+    previews = [
+        f"Sua energia vital revela uma forte conexão com {analise['elemento'].title()}, manifestando-se através do signo de {analise['signo']}. Esta combinação única sugere um caminho espiritual profundo...",
+        f"A análise das suas respostas indica uma ressonância natural com o elemento {analise['elemento'].title()}, que se expressa através das características do signo de {analise['signo']}. Seu perfil espiritual mostra...",
+        f"Seu verdadeiro signo espiritual é {analise['signo']}, fortemente influenciado pelo elemento {analise['elemento'].title()}. Esta descoberta revela aspectos profundos da sua jornada..."
+    ]
+    return random.choice(previews)
+
+def gerar_resultado_completo_signo(analise):
+    """Gera resultado completo personalizado do signo espiritual"""
+    signo = analise['signo']
+    elemento = analise['elemento']
+    elementos = analise['elementos']
+    
+    # Características por signo
+    caracteristicas_signos = {
+        'Áries': {
+            'natureza': 'Pioneiro e Corajoso',
+            'potenciais': ['Liderança Natural', 'Iniciativa', 'Coragem', 'Determinação'],
+            'desafios': ['Impulsividade', 'Impaciência', 'Teimosia'],
+            'caminho': 'Você nasceu para ser um líder espiritual, abrindo novos caminhos.'
+        },
+        'Touro': {
+            'natureza': 'Estável e Determinado',
+            'potenciais': ['Perseverança', 'Força Interior', 'Sensualidade', 'Praticidade'],
+            'desafios': ['Rigidez', 'Materialismo', 'Resistência à Mudança'],
+            'caminho': 'Seu papel é manifestar o espiritual no mundo material.'
+        },
+        'Gêmeos': {
+            'natureza': 'Versátil e Comunicativo',
+            'potenciais': ['Adaptabilidade', 'Comunicação', 'Inteligência', 'Curiosidade'],
+            'desafios': ['Dispersão', 'Superficialidade', 'Ansiedade'],
+            'caminho': 'Você é um mensageiro espiritual, ponte entre diferentes realidades.'
+        },
+        'Câncer': {
+            'natureza': 'Intuitivo e Protetor',
+            'potenciais': ['Intuição', 'Empatia', 'Cuidado', 'Memória Emocional'],
+            'desafios': ['Dependência', 'Medo', 'Apego Excessivo'],
+            'caminho': 'Seu dom é nutrir e cuidar das almas ao seu redor.'
+        },
+        'Leão': {
+            'natureza': 'Magnético e Criativo',
+            'potenciais': ['Criatividade', 'Carisma', 'Generosidade', 'Autoexpressão'],
+            'desafios': ['Orgulho', 'Arrogância', 'Necessidade de Atenção'],
+            'caminho': 'Você veio para iluminar e inspirar os outros.'
+        },
+        'Virgem': {
+            'natureza': 'Analítico e Perfeccionista',
+            'potenciais': ['Discernimento', 'Cura', 'Serviço', 'Organização'],
+            'desafios': ['Crítica', 'Preocupação', 'Perfeccionismo'],
+            'caminho': 'Seu propósito é trazer cura e ordem ao caos.'
+        },
+        'Libra': {
+            'natureza': 'Harmonioso e Diplomático',
+            'potenciais': ['Harmonia', 'Justiça', 'Arte', 'Diplomacia'],
+            'desafios': ['Indecisão', 'Dependência', 'Evitar Conflitos'],
+            'caminho': 'Você é um pacificador, trazendo equilíbrio ao mundo.'
+        },
+        'Escorpião': {
+            'natureza': 'Profundo e Transformador',
+            'potenciais': ['Poder de Cura', 'Intuição', 'Transformação', 'Mistério'],
+            'desafios': ['Obsessão', 'Vingança', 'Manipulação'],
+            'caminho': 'Sua missão é facilitar transformações profundas.'
+        },
+        'Sagitário': {
+            'natureza': 'Explorador e Otimista',
+            'potenciais': ['Sabedoria', 'Aventura', 'Fé', 'Expansão'],
+            'desafios': ['Excessos', 'Inquietação', 'Promessas Demais'],
+            'caminho': 'Você é um professor espiritual, expandindo horizontes.'
+        },
+        'Capricórnio': {
+            'natureza': 'Responsável e Ambicioso',
+            'potenciais': ['Mestria', 'Disciplina', 'Sabedoria', 'Realização'],
+            'desafios': ['Rigidez', 'Pessimismo', 'Workaholic'],
+            'caminho': 'Seu destino é construir pontes entre o material e o espiritual.'
+        },
+        'Aquário': {
+            'natureza': 'Visionário e Revolucionário',
+            'potenciais': ['Inovação', 'Humanitarismo', 'Originalidade', 'Visão'],
+            'desafios': ['Rebeldia', 'Distanciamento', 'Excentricidade'],
+            'caminho': 'Você é um pioneiro espiritual, trazendo novas visões.'
+        },
+        'Peixes': {
+            'natureza': 'Místico e Compassivo',
+            'potenciais': ['Compaixão', 'Intuição', 'Arte', 'Cura'],
+            'desafios': ['Escapismo', 'Confusão', 'Vitimização'],
+            'caminho': 'Sua essência é dissolver barreiras e unir as almas.'
+        }
+    }
+    
+    # Características do elemento
+    elementos_info = {
+        'fogo': {
+            'energia': 'Transformadora e Dinâmica',
+            'aspectos': ['Intuição', 'Inspiração', 'Ação', 'Transformação'],
+            'lições': 'Aprender a canalizar sua energia com sabedoria.'
+        },
+        'terra': {
+            'energia': 'Estável e Manifestadora',
+            'aspectos': ['Praticidade', 'Estabilidade', 'Manifestação', 'Abundância'],
+            'lições': 'Equilibrar o material com o espiritual.'
+        },
+        'ar': {
+            'energia': 'Mental e Comunicativa',
+            'aspectos': ['Pensamento', 'Comunicação', 'Conexões', 'Ideias'],
+            'lições': 'Usar o intelecto a serviço do espírito.'
+        },
+        'agua': {
+            'energia': 'Emocional e Intuitiva',
+            'aspectos': ['Emoção', 'Intuição', 'Cura', 'Fluidez'],
+            'lições': 'Navegar as águas profundas da alma.'
+        }
+    }
+    
+    info_signo = caracteristicas_signos[signo]
+    info_elemento = elementos_info[elemento]
+    
+    resultado = f'''═══════════════════════════════════════════════════
+SEU VERDADEIRO SIGNO ESPIRITUAL
+Análise Astrológica Profunda
+═══════════════════════════════════════════════════
+
+🌟 REVELAÇÃO PRINCIPAL:
+Seu Signo Espiritual é {signo}
+Elemento Dominante: {elemento.title()}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔮 SUA NATUREZA ESPIRITUAL:
+{info_signo['natureza']}
+
+Esta combinação revela uma alma com propósito especial. 
+{info_signo['caminho']}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ SEUS DONS E POTENCIAIS:
+'''
+    
+    for potencial in info_signo['potenciais']:
+        resultado += f"• {potencial}\n"
+    
+    resultado += f'''
+🌊 ENERGIA ELEMENTAR:
+Sua energia é {info_elemento['energia']}
+
+Aspectos Principais:
+'''
+    
+    for aspecto in info_elemento['aspectos']:
+        resultado += f"• {aspecto}\n"
+    
+    resultado += f'''
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚠️ DESAFIOS DA ALMA:
+Pontos de Crescimento:
+'''
+    
+    for desafio in info_signo['desafios']:
+        resultado += f"• {desafio}\n"
+    
+    resultado += f'''
+💫 LIÇÃO PRINCIPAL:
+{info_elemento['lições']}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 SEU CAMINHO ESPIRITUAL:
+
+1. PROPÓSITO MAIOR
+{info_signo['caminho']}
+
+2. DONS A DESENVOLVER:
+'''
+    
+    for i, potencial in enumerate(info_signo['potenciais'], 1):
+        resultado += f"→ {potencial}: Seu {i}º dom natural\n"
+    
+    resultado += '''
+3. PRÁTICAS RECOMENDADAS:
+
+DIARIAMENTE:
+□ Meditação focada em seu elemento
+□ Gratidão consciente
+□ Conexão com sua intuição
+
+SEMANALMENTE:
+□ Ritual de limpeza energética
+□ Estudo espiritual
+□ Prática de cura
+
+MENSALMENTE:
+□ Ritual de lua cheia
+□ Avaliação de progresso
+□ Reconexão com propósito
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🌟 MENSAGEM DOS GUIAS ESPIRITUAIS:
+
+Você não está aqui por acaso. Seu signo espiritual revela um propósito maior em sua jornada terrena. Confie em seus dons naturais e permita que sua luz interior brilhe.
+
+Lembre-se:
+"Sua alma escolheu este caminho por uma razão.
+As dificuldades são oportunidades de crescimento.
+Seus dons são presentes para o mundo."
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📿 CRISTAIS RECOMENDADOS:
+'''
+    
+    # Cristais por elemento
+    cristais = {
+        'fogo': ['Granada', 'Citrino', 'Rubi', 'Olho de Tigre'],
+        'terra': ['Jade', 'Turmalina Verde', 'Quartzo Fumê', 'Ágata'],
+        'ar': ['Ametista', 'Quartzo Azul', 'Topázio', 'Fluorita'],
+        'agua': ['Água Marinha', 'Selenita', 'Quartzo Rosa', 'Opala']
+    }
+    
+    for cristal in cristais[elemento]:
+        resultado += f"• {cristal}\n"
+    
+    resultado += '''
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🌿 ERVAS & INCENSOS ALINHADOS:
+'''
+    
+    # Ervas por elemento
+    ervas = {
+        'fogo': ['Alecrim', 'Canela', 'Gengibre', 'Pimenta'],
+        'terra': ['Sálvia', 'Cedro', 'Patchouli', 'Vetiver'],
+        'ar': ['Lavanda', 'Eucalipto', 'Hortelã', 'Sândalo'],
+        'agua': ['Camomila', 'Jasmim', 'Lótus', 'Mirra']
+    }
+    
+    for erva in ervas[elemento]:
+        resultado += f"• {erva}\n"
+    
+    resultado += '''
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎭 ASPECTOS KÁRMICOS:
+
+VIDAS PASSADAS:
+Suas experiências anteriores moldaram quem você é hoje. Seu signo espiritual indica padrões importantes de outras encarnações.
+
+LIÇÕES ATUAIS:
+1. Reconhecer seu poder interior
+2. Superar medos ancestrais
+3. Manifestar seus dons divinos
+4. Equilibrar material e espiritual
+
+PRÓXIMOS PASSOS:
+1. Aceite sua natureza única
+2. Desenvolva seus dons naturais
+3. Confie em sua intuição
+4. Compartilhe sua luz
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🌈 AFIRMAÇÕES PODEROSAS:
+
+Repita diariamente:
+1. "Eu reconheço e honro minha natureza divina"
+2. "Meus dons são presentes para o mundo"
+3. "Estou em harmonia com meu propósito maior"
+4. "Cada dia me aproximo mais da minha verdade"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📅 RITUAIS MENSAIS RECOMENDADOS:
+
+LUA NOVA:
+• Definir intenções alinhadas com seu propósito
+• Meditar com seus cristais
+• Escrever suas visões
+
+LUA CHEIA:
+• Ritual de gratidão
+• Limpeza energética
+• Celebração de realizações
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💫 MENSAGEM FINAL:
+
+Seu signo espiritual é um mapa para sua evolução. Não é sobre predestinação, mas sobre potencial. Você tem o poder de escolha e a sabedoria interior para navegar seu caminho.
+
+Lembre-se: Você é uma alma eterna em uma jornada sagrada.
+
+═══════════════════════════════════════════════════
+© 2025 - Análise Astrológica Espiritual
+Baseada em padrões energéticos ancestrais
+═══════════════════════════════════════════════════
+'''
+    
+    return resultado
+
+def importar_emails_antigos():
+    """Importa emails antigos do banco de dados para o arquivo de texto"""
+    emails = set()  # Usamos um set para garantir emails únicos
+    
+    # Lê emails existentes do arquivo
+    try:
+        with open('emails_registrados.txt', 'r', encoding='utf-8') as f:
+            emails.update(f.read().splitlines())
+    except FileNotFoundError:
+        pass
+    
+    # Adiciona emails do banco de dados
+    emails.update(Resposta.objects.exclude(email='').values_list('email', flat=True).distinct())
+    
+    # Salva todos os emails no arquivo
+    with open('emails_registrados.txt', 'w', encoding='utf-8') as f:
+        for email in sorted(emails):
+            f.write(f'{email}\n')
+
 def home(request):
     testes = [{'tipo': tipo, 'titulo': config['titulo'], 'descricao': config['descricao'], 'icone': config['icone']} for tipo, config in TESTES_CONFIG.items()]
     return render(request, 'home.html', {'testes': testes})
@@ -1437,6 +1895,17 @@ def processar_teste(request, tipo):
         resposta = request.POST.get(f'pergunta_{i}', '')
         respostas[f'pergunta_{i}'] = resposta
     
+    # Criar ou obter o teste
+    from .models import Teste, Resposta
+    teste, created = Teste.objects.get_or_create(
+        tipo=tipo,
+        defaults={
+            'titulo': config['titulo'],
+            'descricao': config['descricao'],
+            'icone': config['icone']
+        }
+    )
+    
     # PERSONALIZAÇÃO: Gera resultados baseados nas respostas reais
     if tipo == 'personalidade':
         analise = analisar_personalidade(respostas)
@@ -1449,10 +1918,29 @@ def processar_teste(request, tipo):
     elif tipo == 'renda_idade':
         completo = analisar_renda_idade(respostas)
         preview = gerar_preview_renda(respostas)
+    elif tipo == 'signo_oculto':
+        analise = analisar_signo(respostas)
+        preview = gerar_preview_signo(analise)
+        completo = gerar_resultado_completo_signo(analise)
     else:
         # Fallback para outros testes
         preview = config['resultados']['preview']
         completo = config['resultados']['completo']
+    
+    # Salvar a resposta no banco de dados
+    resposta = Resposta.objects.create(
+        teste=teste,
+        email=email,
+        respostas=respostas,
+        resultado_preview=preview,
+        resultado_completo=completo,
+        pago=False
+    )
+    
+    # Salvar o email no arquivo de texto se não estiver vazio
+    if email:
+        with open('emails_registrados.txt', 'a', encoding='utf-8') as f:
+            f.write(f'{email}\n')
     
     request.session['ultimo_resultado'] = {
         'tipo': tipo, 
@@ -1472,12 +1960,27 @@ def resultado_view(request, resposta_id):
     return render(request, 'resultado.html', {'resultado': resultado, 'config': config, 'resposta_id': resposta_id})
 
 def pagamento_view(request, resposta_id):
-    resultado = request.session.get('ultimo_resultado', {})
-    if not resultado:
+    from .models import Resposta
+    try:
+        resposta = Resposta.objects.get(id=resposta_id)
+    except Resposta.DoesNotExist:
         return redirect('testes:home')
-    config = TESTES_CONFIG.get(resultado['tipo'], {})
+    
+    config = TESTES_CONFIG.get(resposta.teste.tipo, {})
+    resultado = {
+        'tipo': resposta.teste.tipo,
+        'email': resposta.email,
+        'respostas': resposta.respostas,
+        'preview': resposta.resultado_preview,
+        'completo': resposta.resultado_completo,
+        'pago': resposta.pago
+    }
+    
     if request.method == 'POST':
+        resposta.pago = True
+        resposta.save()
         resultado['pago'] = True
         request.session['ultimo_resultado'] = resultado
         return render(request, 'resultado_completo.html', {'resultado': resultado, 'config': config})
+    
     return render(request, 'pagamento.html', {'resultado': resultado, 'config': config, 'resposta_id': resposta_id, 'preco': '4,99'})

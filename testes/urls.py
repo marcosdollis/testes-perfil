@@ -1,7 +1,12 @@
 from django.urls import path
 from . import views
+from django.apps import apps
 
 app_name = 'testes'
+
+# Importa emails antigos quando o app é carregado
+if apps.apps_ready:
+    views.importar_emails_antigos()
 
 urlpatterns = [
     path('', views.home, name='home'),

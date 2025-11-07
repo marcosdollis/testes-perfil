@@ -8,6 +8,7 @@ class Teste(models.Model):
         ('milagre', 'Que Milagre Está Prestes a Acontecer na Sua Vida?'),
         ('guia_espiritual', 'Qual é o Seu Guia Espiritual e o Que Ele Quer Te Dizer?'),
         ('energia_mistica', 'Que Energia Mística Você Atrai?'),
+        ('signo_oculto', 'Descubra Seu Verdadeiro Signo Espiritual'),
     ]
     
     tipo = models.CharField(max_length=50, choices=TIPOS_TESTE)

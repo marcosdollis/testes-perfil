@@ -83,6 +83,45 @@
     gap: 15px;
 }
 
+/* Estilos específicos para teste astrológico */
+.zodiac-question {
+    position: relative;
+}
+
+.zodiac-question::before {
+    content: '✨';
+    position: absolute;
+    left: -30px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.5rem;
+    animation: sparkle 2s infinite;
+}
+
+.zodiac-options {
+    position: relative;
+}
+
+.zodiac-option {
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.zodiac-option:hover {
+    border-color: #ffd700;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+.zodiac-option.selected {
+    background: rgba(255, 215, 0, 0.2);
+    border-color: #ffd700;
+}
+
+@keyframes sparkle {
+    0%, 100% { opacity: 0.5; transform: translateY(-50%) scale(1); }
+    50% { opacity: 1; transform: translateY(-50%) scale(1.2); }
+}
+
 .opcao {
     background: rgba(255, 255, 255, 0.1);
     padding: 20px;

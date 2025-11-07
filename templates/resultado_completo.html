@@ -64,6 +64,72 @@
     font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
 }
 
+/* Estilos específicos para resultado astrológico completo */
+.zodiac-complete {
+    padding: 30px;
+    border-radius: 15px;
+    margin: 20px 0;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.zodiac-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.zodiac-sign-large {
+    font-size: 5rem;
+    color: #ffd700;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
+    animation: pulse 2s infinite;
+}
+
+.zodiac-info {
+    text-align: center;
+}
+
+.element-properties {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.element-property {
+    padding: 15px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    text-align: center;
+}
+
+.crystal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.crystal-item {
+    padding: 10px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.crystal-item:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
 .resultado-completo strong {
     color: #63b3ed;
     font-weight: 700;
