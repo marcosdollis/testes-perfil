@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
+from django.conf import settings
 from .models import Resposta
 import json
 import random
+import os
 
 # Sistema de análise de respostas e geração de resultados personalizados
 
@@ -1937,10 +1939,16 @@ def processar_teste(request, tipo):
         pago=False
     )
     
-    # Salvar o email no arquivo de texto se não estiver vazio
-    if email:
-        with open('emails_registrados.txt', 'a', encoding='utf-8') as f:
-            f.write(f'{email}\n')
+    # Salvar o email no arquivo de texto apenas em ambiente local (DEBUG)
+    # Em produção (Railway) não gravamos no filesystem local.
+    write_file = os.environ.get('WRITE_EMAIL_FILE', 'False') == 'True'
+    if email and (getattr(settings, 'DEBUG', False) or write_file):
+        try:
+            with open('emails_registrados.txt', 'a', encoding='utf-8') as f:
+                f.write(f'{email}\n')
+        except Exception:
+            # Não falhar o fluxo principal por problema de I/O
+            pass
     
     request.session['ultimo_resultado'] = {
         'tipo': tipo, 

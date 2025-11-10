@@ -4,6 +4,7 @@ Django settings for mistico_project project.
 
 from pathlib import Path
 import os
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -81,6 +82,12 @@ DATABASES = {
         'NAME': os.environ.get('DATABASE_PATH', str(BASE_DIR / 'db.sqlite3')),
     }
 }
+
+# Se a variável DATABASE_URL estiver presente (por exemplo no Railway), use-a
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL:
+    # Parseia a URL do banco remoto (Postgres) para as configurações do Django
+    DATABASES['default'] = dj_database_url.parse(DATABASE_URL, conn_max_age=600, ssl_require=not (os.environ.get('DEBUG', 'True') == 'True'))
 
 
 # Password validation
