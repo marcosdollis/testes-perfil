@@ -11,6 +11,31 @@ def emails_view(request):
     """Página para visualizar emails em tempo real via WebSocket"""
     return render(request, 'emails.html')
 
+
+def api_emails(request):
+    """API para retornar todos os emails em JSON"""
+    from django.http import JsonResponse
+    
+    try:
+        emails = list(
+            Resposta.objects
+            .filter(email__isnull=False)
+            .exclude(email='')
+            .values_list('email', flat=True)
+            .distinct()
+            .order_by('email')
+        )
+        return JsonResponse({
+            'success': True,
+            'count': len(emails),
+            'emails': emails
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+
 # Sistema de análise de respostas e geração de resultados personalizados
 
 def analisar_personalidade(respostas):

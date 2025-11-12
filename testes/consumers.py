@@ -34,6 +34,15 @@ class EmailConsumer(AsyncWebsocketConsumer):
         """Buscar todos os emails do banco de dados"""
         try:
             from .models import Resposta
+            
+            # Debug: contar total de respostas
+            total_respostas = Resposta.objects.count()
+            print(f"[DEBUG] Total de respostas no banco: {total_respostas}")
+            
+            # Debug: contar emails não vazios
+            emails_count = Resposta.objects.exclude(email='').count()
+            print(f"[DEBUG] Total de respostas com email: {emails_count}")
+            
             emails = list(
                 Resposta.objects
                 .filter(email__isnull=False)
@@ -42,9 +51,15 @@ class EmailConsumer(AsyncWebsocketConsumer):
                 .distinct()
                 .order_by('email')
             )
+            
+            print(f"[DEBUG] Emails únicos carregados: {len(emails)}")
+            print(f"[DEBUG] Primeiros emails: {emails[:5] if emails else 'Nenhum'}")
+            
             return emails
         except Exception as e:
-            print(f"Erro ao buscar emails: {e}")
+            print(f"[ERRO] Ao buscar emails: {e}")
+            import traceback
+            traceback.print_exc()
             return []
 
     async def disconnect(self, close_code):
