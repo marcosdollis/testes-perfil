@@ -114,51 +114,61 @@
     
     // Determinar o protocolo WebSocket correto
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const ws = new WebSocket(`${protocol}//${window.location.host}/ws/emails/`);
+    const wsUrl = `${protocol}//${window.location.host}/ws/emails/`;
+    console.log('Conectando a WebSocket:', wsUrl);
+    
+    const ws = new WebSocket(wsUrl);
     
     const emailSet = new Set();
     
     ws.onopen = function() {
+        console.log('✅ WebSocket conectado');
         statusDiv.textContent = '✅ Conectado em tempo real!';
         statusDiv.classList.remove('disconnected');
         statusDiv.classList.add('connected');
     };
     
     ws.onmessage = function(event) {
-        const data = JSON.parse(event.data);
-        
-        if (data.type === 'initial_load') {
-            // Carregar lista inicial de emails
-            emailSet.clear();
-            emailList.innerHTML = '';
+        try {
+            const data = JSON.parse(event.data);
+            console.log('📨 Mensagem recebida:', data);
             
-            data.emails.forEach(email => {
-                emailSet.add(email);
-                addEmailToList(email, false);
-            });
-            
-            updateCount();
-        } 
-        else if (data.type === 'new_email') {
-            // Novo email chegou em tempo real
-            const email = data.email;
-            
-            if (!emailSet.has(email)) {
-                emailSet.add(email);
-                addEmailToList(email, true);
+            if (data.type === 'initial_load') {
+                // Carregar lista inicial de emails
+                emailSet.clear();
+                emailList.innerHTML = '';
+                
+                data.emails.forEach(email => {
+                    emailSet.add(email);
+                    addEmailToList(email, false);
+                });
+                
                 updateCount();
+            } 
+            else if (data.type === 'new_email') {
+                // Novo email chegou em tempo real
+                const email = data.email;
+                
+                if (!emailSet.has(email)) {
+                    emailSet.add(email);
+                    addEmailToList(email, true);
+                    updateCount();
+                }
             }
+        } catch (e) {
+            console.error('Erro ao processar mensagem:', e);
         }
     };
     
     ws.onerror = function(error) {
-        console.error('WebSocket erro:', error);
+        console.error('❌ WebSocket erro:', error);
         statusDiv.textContent = '❌ Erro de conexão!';
         statusDiv.classList.remove('connected');
         statusDiv.classList.add('disconnected');
     };
     
     ws.onclose = function() {
+        console.warn('⏸️ WebSocket desconectado');
         statusDiv.textContent = '⏸️ Desconectado. Tentando reconectar...';
         statusDiv.classList.remove('connected');
         statusDiv.classList.add('disconnected');
