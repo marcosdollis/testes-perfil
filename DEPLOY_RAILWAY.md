@@ -87,16 +87,46 @@ DATABASES = {
 
 ---
 
-## 🔧 Comandos Úteis
+## 🔧 Rodar Migrações contra Banco Remoto
+
+Se você quiser rodar migrações manualmente contra o banco do Railway **antes** do deploy, use os scripts fornecidos:
+
+### No PowerShell (Windows):
+```powershell
+# Obter DATABASE_URL do painel do Railway
+# Depois rodar:
+.\migrate_remote.ps1 -DatabaseUrl "postgres://user:pass@host:5432/dbname"
+
+# Ou apenas um app específico:
+.\migrate_remote.ps1 -DatabaseUrl "postgres://..." -App "testes"
+
+# Com verbose (SQL):
+.\migrate_remote.ps1 -DatabaseUrl "postgres://..." -ShowSQL
+```
+
+### No Bash (Linux/Mac):
+```bash
+# Rodar:
+./migrate_remote.sh "postgres://user:pass@host:5432/dbname"
+
+# Ou apenas um app específico:
+./migrate_remote.sh "postgres://..." "testes"
+
+# Com verbose:
+./migrate_remote.sh "postgres://..." "" --verbose
+```
+
+**Como obter o DATABASE_URL do Railway:**
+1. No painel do Railway, vá em **Plugins** → **Postgres**
+2. Clique na aba **Data** ou **Variables**
+3. Copie o valor de `DATABASE_URL`
+4. Cole no comando acima
+
+### Comandos Úteis Adicionais
 
 ### Coletar arquivos estáticos (Railway faz automaticamente):
 ```bash
 python manage.py collectstatic --no-input
-```
-
-### Rodar migrações (Railway faz automaticamente):
-```bash
-python manage.py migrate
 ```
 
 ### Ver logs no Railway:
