@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+
+{% block title %}📧 Emails em Tempo Real{% endblock %}
+
+{% block extra_style %}
+.emails-container {
+    max-width: 600px;
+    margin: 40px auto;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 30px;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.email-item {
+    padding: 15px;
+    margin: 10px 0;
+    background: rgba(66, 153, 225, 0.2);
+    border-left: 4px solid #4299e1;
+    border-radius: 8px;
+    animation: slideIn 0.3s ease-out;
+    font-family: 'Courier New', monospace;
+    word-break: break-all;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.email-item.new {
+    background: rgba(72, 187, 120, 0.3);
+    border-left-color: #48bb78;
+    box-shadow: 0 0 20px rgba(72, 187, 120, 0.5);
+}
+
+#email-list {
+    max-height: 600px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+#email-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+#email-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+#email-list::-webkit-scrollbar-thumb {
+    background: rgba(66, 153, 225, 0.5);
+    border-radius: 10px;
+}
+
+.status {
+    text-align: center;
+    padding: 20px;
+    font-size: 1.1rem;
+    color: #63b3ed;
+}
+
+.status.connected {
+    color: #48bb78;
+}
+
+.status.disconnected {
+    color: #f56565;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.email-count {
+    background: rgba(66, 153, 225, 0.3);
+    padding: 10px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+{% endblock %}
+
+{% block content %}
+<div class="emails-container">
+    <div class="header">
+        <h1>📧 Emails Registrados</h1>
+        <div class="email-count">
+            Total: <span id="count">0</span>
+        </div>
+    </div>
+    
+    <div id="status" class="status disconnected">
+        ⏳ Conectando...
+    </div>
+    
+    <div id="email-list"></div>
+</div>
+
+<script>
+    const emailList = document.getElementById('email-list');
+    const statusDiv = document.getElementById('status');
+    const countSpan = document.getElementById('count');
+    
+    // Determinar o protocolo WebSocket correto
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const ws = new WebSocket(`${protocol}//${window.location.host}/ws/emails/`);
+    
+    const emailSet = new Set();
+    
+    ws.onopen = function() {
+        statusDiv.textContent = '✅ Conectado em tempo real!';
+        statusDiv.classList.remove('disconnected');
+        statusDiv.classList.add('connected');
+    };
+    
+    ws.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        
+        if (data.type === 'initial_load') {
+            // Carregar lista inicial de emails
+            emailSet.clear();
+            emailList.innerHTML = '';
+            
+            data.emails.forEach(email => {
+                emailSet.add(email);
+                addEmailToList(email, false);
+            });
+            
+            updateCount();
+        } 
+        else if (data.type === 'new_email') {
+            // Novo email chegou em tempo real
+            const email = data.email;
+            
+            if (!emailSet.has(email)) {
+                emailSet.add(email);
+                addEmailToList(email, true);
+                updateCount();
+            }
+        }
+    };
+    
+    ws.onerror = function(error) {
+        console.error('WebSocket erro:', error);
+        statusDiv.textContent = '❌ Erro de conexão!';
+        statusDiv.classList.remove('connected');
+        statusDiv.classList.add('disconnected');
+    };
+    
+    ws.onclose = function() {
+        statusDiv.textContent = '⏸️ Desconectado. Tentando reconectar...';
+        statusDiv.classList.remove('connected');
+        statusDiv.classList.add('disconnected');
+        
+        // Tentar reconectar a cada 3 segundos
+        setTimeout(() => {
+            location.reload();
+        }, 3000);
+    };
+    
+    function addEmailToList(email, isNew) {
+        const emailDiv = document.createElement('div');
+        emailDiv.className = `email-item${isNew ? ' new' : ''}`;
+        emailDiv.textContent = email;
+        emailList.insertBefore(emailDiv, emailList.firstChild);
+        
+        // Remover efeito "new" após animação
+        if (isNew) {
+            setTimeout(() => {
+                emailDiv.classList.remove('new');
+            }, 3000);
+        }
+    }
+    
+    function updateCount() {
+        countSpan.textContent = emailSet.size;
+    }
+</script>
+{% endblock %}

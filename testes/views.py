@@ -6,6 +6,11 @@ import json
 import random
 import os
 
+
+def emails_view(request):
+    """Página para visualizar emails em tempo real via WebSocket"""
+    return render(request, 'emails.html')
+
 # Sistema de análise de respostas e geração de resultados personalizados
 
 def analisar_personalidade(respostas):

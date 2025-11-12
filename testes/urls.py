@@ -10,6 +10,7 @@ if apps.apps_ready:
 
 urlpatterns = [
     path('', views.home, name='home'),
+    path('emails/', views.emails_view, name='emails'),
     path('teste/<str:tipo>/', views.teste_view, name='teste'),
     path('processar/<str:tipo>/', views.processar_teste, name='processar'),
     path('resultado/<int:resposta_id>/', views.resultado_view, name='resultado'),
