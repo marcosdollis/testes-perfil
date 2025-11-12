@@ -1873,12 +1873,19 @@ def importar_emails_antigos():
         pass
     
     # Adiciona emails do banco de dados
-    emails.update(Resposta.objects.exclude(email='').values_list('email', flat=True).distinct())
+    try:
+        emails.update(Resposta.objects.exclude(email='').values_list('email', flat=True).distinct())
+    except Exception:
+        # Ignora erros se a tabela não existir (ex: durante migrations)
+        pass
     
     # Salva todos os emails no arquivo
-    with open('emails_registrados.txt', 'w', encoding='utf-8') as f:
-        for email in sorted(emails):
-            f.write(f'{email}\n')
+    try:
+        with open('emails_registrados.txt', 'w', encoding='utf-8') as f:
+            for email in sorted(emails):
+                f.write(f'{email}\n')
+    except Exception:
+        pass
 
 def home(request):
     testes = [{'tipo': tipo, 'titulo': config['titulo'], 'descricao': config['descricao'], 'icone': config['icone']} for tipo, config in TESTES_CONFIG.items()]
