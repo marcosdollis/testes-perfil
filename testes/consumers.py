@@ -1,7 +1,5 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
-from asgiref.sync import sync_to_async
-from .models import Resposta
 
 
 class EmailConsumer(AsyncWebsocketConsumer):
@@ -20,20 +18,11 @@ class EmailConsumer(AsyncWebsocketConsumer):
 
         await self.accept()
 
-        # Enviar lista inicial de emails
-        try:
-            emails = await self.get_all_emails()
-            await self.send(text_data=json.dumps({
-                'type': 'initial_load',
-                'emails': emails
-            }))
-        except Exception as e:
-            print(f"Erro ao carregar emails iniciais: {e}")
-            # Enviar lista vazia se houver erro
-            await self.send(text_data=json.dumps({
-                'type': 'initial_load',
-                'emails': []
-            }))
+        # Enviar inicial vazio - os emails virão via broadcast
+        await self.send(text_data=json.dumps({
+            'type': 'initial_load',
+            'emails': []
+        }))
 
     async def disconnect(self, close_code):
         """Remover cliente do grupo ao desconectar"""
@@ -49,15 +38,3 @@ class EmailConsumer(AsyncWebsocketConsumer):
             await self.send(text_data=json.dumps(message))
         except Exception as e:
             print(f"Erro ao enviar mensagem: {e}")
-
-    @sync_to_async
-    def get_all_emails(self):
-        """Obter todos os emails únicos do banco"""
-        try:
-            emails = list(Resposta.objects.exclude(
-                email=''
-            ).values_list('email', flat=True).distinct().order_by('-criado_em')[:100])
-            return emails
-        except Exception as e:
-            print(f"Erro ao obter emails: {e}")
-            return []
