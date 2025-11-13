@@ -2003,11 +2003,37 @@ def resultado_view(request, resposta_id):
         return render(request, 'resultado.html', {'resultado': resultado, 'config': config, 'resposta_id': resposta_id})
 
 def pagamento_view(request, resposta_id):
+    """View para processar pagamento via Mercado Pago"""
     from .models import Resposta
+    from .mercado_pago_service import MercadoPagoService
+    
     try:
         resposta = Resposta.objects.get(id=resposta_id)
     except Resposta.DoesNotExist:
         return redirect('testes:home')
+    
+    # Se já pagou, redireciona para resultado completo
+    if resposta.pago:
+        config = TESTES_CONFIG.get(resposta.teste.tipo, {})
+        resultado = {
+            'tipo': resposta.teste.tipo,
+            'email': resposta.email,
+            'respostas': resposta.respostas,
+            'preview': resposta.resultado_preview,
+            'completo': resposta.resultado_completo,
+            'pago': resposta.pago
+        }
+        request.session['ultimo_resultado'] = resultado
+        return render(request, 'resultado_completo.html', {'resultado': resultado, 'config': config})
+    
+    # Gerar link de pagamento Mercado Pago
+    mp_service = MercadoPagoService()
+    mp_response = mp_service.criar_preferencia_pagamento(
+        resposta_id=resposta_id,
+        email=resposta.email,
+        teste_titulo=resposta.teste.titulo,
+        valor=resposta.payment_amount
+    )
     
     config = TESTES_CONFIG.get(resposta.teste.tipo, {})
     resultado = {
@@ -2019,11 +2045,95 @@ def pagamento_view(request, resposta_id):
         'pago': resposta.pago
     }
     
-    if request.method == 'POST':
-        resposta.pago = True
-        resposta.save()
-        resultado['pago'] = True
-        request.session['ultimo_resultado'] = resultado
-        return render(request, 'resultado_completo.html', {'resultado': resultado, 'config': config})
+    context = {
+        'resultado': resultado,
+        'config': config,
+        'resposta_id': resposta_id,
+        'preco': str(resposta.payment_amount).replace('.', ','),
+        'checkout_url': mp_response.get('init_point') if mp_response['success'] else None,
+        'sandbox_checkout_url': mp_response.get('sandbox_init_point') if mp_response['success'] else None,
+        'error': mp_response.get('error') if not mp_response['success'] else None,
+    }
     
-    return render(request, 'pagamento.html', {'resultado': resultado, 'config': config, 'resposta_id': resposta_id, 'preco': '4,99'})
+    return render(request, 'pagamento.html', context)
+
+
+def webhook_success(request):
+    """Callback de sucesso do Mercado Pago"""
+    from django.http import JsonResponse
+    from .models import Resposta
+    
+    payment_id = request.GET.get('payment_id') or request.GET.get('merchantOrderId')
+    
+    if payment_id:
+        try:
+            from .mercado_pago_service import MercadoPagoService
+            mp_service = MercadoPagoService()
+            result = mp_service.processar_webhook(payment_id)
+            
+            if result['success']:
+                resposta_id = result.get('resposta_id')
+                return redirect('testes:resultado', resposta_id=resposta_id)
+        except Exception as e:
+            print(f"Erro ao processar webhook success: {e}")
+    
+    return redirect('testes:home')
+
+
+def webhook_failure(request):
+    """Callback de falha do Mercado Pago"""
+    payment_id = request.GET.get('payment_id')
+    
+    if payment_id:
+        try:
+            from .models import Resposta
+            resposta = Resposta.objects.get(payment_id=payment_id)
+            return redirect('testes:pagamento', resposta_id=resposta.id)
+        except Resposta.DoesNotExist:
+            pass
+    
+    return redirect('testes:home')
+
+
+def webhook_pending(request):
+    """Callback de pendência do Mercado Pago"""
+    payment_id = request.GET.get('payment_id')
+    
+    if payment_id:
+        try:
+            from .models import Resposta
+            resposta = Resposta.objects.get(payment_id=payment_id)
+            return redirect('testes:pagamento', resposta_id=resposta.id)
+        except Resposta.DoesNotExist:
+            pass
+    
+    return redirect('testes:home')
+
+
+def webhook_notification(request):
+    """Webhook IPN do Mercado Pago"""
+    from django.http import JsonResponse
+    import json
+    
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            
+            # Processar notificação
+            if data.get('type') == 'payment':
+                payment_id = data.get('data', {}).get('id')
+                
+                if payment_id:
+                    from .mercado_pago_service import MercadoPagoService
+                    mp_service = MercadoPagoService()
+                    result = mp_service.processar_webhook(payment_id)
+                    
+                    return JsonResponse({'success': result['success']})
+            
+            return JsonResponse({'success': True})
+        except Exception as e:
+            print(f"Erro ao processar webhook notification: {e}")
+            return JsonResponse({'success': False, 'error': str(e)}, status=500)
+    
+    return JsonResponse({'success': False}, status=400)
+

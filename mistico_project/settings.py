@@ -147,5 +147,10 @@ CHANNEL_LAYERS = {
     }
 }
 
+# Mercado Pago Configuration
+MERCADO_PAGO_ACCESS_TOKEN = os.environ.get('MERCADO_PAGO_ACCESS_TOKEN', '')
+MERCADO_PAGO_PUBLIC_KEY = os.environ.get('MERCADO_PAGO_PUBLIC_KEY', '')
+MERCADO_PAGO_NOTIFICATION_URL = os.environ.get('MERCADO_PAGO_NOTIFICATION_URL', 'https://seu-dominio.com/pagamento/webhook/')
+
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
