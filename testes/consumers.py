@@ -31,29 +31,26 @@ class EmailConsumer(AsyncWebsocketConsumer):
 
     @sync_to_async
     def get_all_emails(self):
-        """Buscar todos os emails do banco de dados"""
+        """Buscar todos os emails do banco de dados de forma segura"""
         try:
             from .models import Resposta
+            from django.db.models import Q
             
             # Debug: contar total de respostas
             total_respostas = Resposta.objects.count()
             print(f"[DEBUG] Total de respostas no banco: {total_respostas}")
             
-            # Debug: contar emails não vazios
-            emails_count = Resposta.objects.exclude(email='').count()
-            print(f"[DEBUG] Total de respostas com email: {emails_count}")
+            # Buscar emails: não nulo E não vazio
+            emails_query = Resposta.objects.filter(
+                Q(email__isnull=False) & ~Q(email='')
+            ).values_list('email', flat=True).distinct().order_by('email')
             
-            emails = list(
-                Resposta.objects
-                .filter(email__isnull=False)
-                .exclude(email='')
-                .values_list('email', flat=True)
-                .distinct()
-                .order_by('email')
-            )
+            emails = list(emails_query)
             
-            print(f"[DEBUG] Emails únicos carregados: {len(emails)}")
-            print(f"[DEBUG] Primeiros emails: {emails[:5] if emails else 'Nenhum'}")
+            print(f"[DEBUG] Total de emails únicos no banco: {len(emails)}")
+            if emails:
+                print(f"[DEBUG] Primeiros 5 emails: {emails[:5]}")
+                print(f"[DEBUG] Últimos 5 emails: {emails[-5:]}")
             
             return emails
         except Exception as e:

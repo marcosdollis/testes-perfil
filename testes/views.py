@@ -15,12 +15,12 @@ def emails_view(request):
 def api_emails(request):
     """API para retornar todos os emails em JSON"""
     from django.http import JsonResponse
+    from django.db.models import Q
     
     try:
         emails = list(
             Resposta.objects
-            .filter(email__isnull=False)
-            .exclude(email='')
+            .filter(Q(email__isnull=False) & ~Q(email=''))
             .values_list('email', flat=True)
             .distinct()
             .order_by('email')
@@ -28,12 +28,15 @@ def api_emails(request):
         return JsonResponse({
             'success': True,
             'count': len(emails),
+            'total_respostas': Resposta.objects.count(),
             'emails': emails
         })
     except Exception as e:
+        import traceback
         return JsonResponse({
             'success': False,
-            'error': str(e)
+            'error': str(e),
+            'traceback': traceback.format_exc()
         }, status=500)
 
 # Sistema de análise de respostas e geração de resultados personalizados
@@ -1887,30 +1890,15 @@ Baseada em padrões energéticos ancestrais
     return resultado
 
 def importar_emails_antigos():
-    """Importa emails antigos do banco de dados para o arquivo de texto"""
-    emails = set()  # Usamos um set para garantir emails únicos
-    
-    # Lê emails existentes do arquivo
+    """Importa emails antigos do banco de dados - apenas para logging"""
     try:
-        with open('emails_registrados.txt', 'r', encoding='utf-8') as f:
-            emails.update(f.read().splitlines())
-    except FileNotFoundError:
-        pass
-    
-    # Adiciona emails do banco de dados
-    try:
-        emails.update(Resposta.objects.exclude(email='').values_list('email', flat=True).distinct())
-    except Exception:
-        # Ignora erros se a tabela não existir (ex: durante migrations)
-        pass
-    
-    # Salva todos os emails no arquivo
-    try:
-        with open('emails_registrados.txt', 'w', encoding='utf-8') as f:
-            for email in sorted(emails):
-                f.write(f'{email}\n')
-    except Exception:
-        pass
+        from django.db.models import Q
+        emails_count = Resposta.objects.filter(
+            Q(email__isnull=False) & ~Q(email='')
+        ).values_list('email', flat=True).distinct().count()
+        print(f"[INIT] Encontrados {emails_count} emails únicos no banco de dados")
+    except Exception as e:
+        print(f"[INIT] Erro ao contar emails: {e}")
 
 def home(request):
     testes = [{'tipo': tipo, 'titulo': config['titulo'], 'descricao': config['descricao'], 'icone': config['icone']} for tipo, config in TESTES_CONFIG.items()]
@@ -1976,16 +1964,8 @@ def processar_teste(request, tipo):
         pago=False
     )
     
-    # Salvar o email no arquivo de texto apenas em ambiente local (DEBUG)
-    # Em produção (Railway) não gravamos no filesystem local.
-    write_file = os.environ.get('WRITE_EMAIL_FILE', 'False') == 'True'
-    if email and (getattr(settings, 'DEBUG', False) or write_file):
-        try:
-            with open('emails_registrados.txt', 'a', encoding='utf-8') as f:
-                f.write(f'{email}\n')
-        except Exception:
-            # Não falhar o fluxo principal por problema de I/O
-            pass
+    # Log: confirmação de salvamento
+    print(f"[SAVE] Email {email} salvo com sucesso (ID: {resposta.id})")
     
     request.session['ultimo_resultado'] = {
         'tipo': tipo, 
