@@ -19,6 +19,11 @@ DATABASE_PATH=/app/data/db.sqlite3
 ## 🐍 PYTHONUNBUFFERED (Recomendado)
 PYTHONUNBUFFERED=1
 
+## 💳 MERCADO PAGO (OBRIGATÓRIO PARA PAGAMENTOS)
+MERCADO_PAGO_ACCESS_TOKEN=APP_USR-xxxxxxxxxxxxx
+MERCADO_PAGO_PUBLIC_KEY=APP_USR-9b7dd7dd-d977-463f-8873-ac2559a75809
+MERCADO_PAGO_NOTIFICATION_URL=https://seu-app.up.railway.app/pagamento/webhook/notification/
+
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ## 📝 COMO ADICIONAR NO RAILWAY:
