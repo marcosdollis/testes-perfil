@@ -1995,14 +1995,32 @@ def processar_teste(request, tipo):
         'completo': completo, 
         'pago': False
     }
-    return redirect('testes:resultado', resposta_id=1)
+    return redirect('testes:resultado', resposta_id=resposta.id)
 
 def resultado_view(request, resposta_id):
-    resultado = request.session.get('ultimo_resultado', {})
-    if not resultado:
-        return redirect('testes:home')
-    config = TESTES_CONFIG.get(resultado['tipo'], {})
-    return render(request, 'resultado.html', {'resultado': resultado, 'config': config, 'resposta_id': resposta_id})
+    """Renderizar página de resultado do teste"""
+    from .models import Resposta
+    
+    # Tentar buscar do banco de dados primeiro
+    try:
+        resposta = Resposta.objects.get(id=resposta_id)
+        config = TESTES_CONFIG.get(resposta.teste.tipo, {})
+        resultado = {
+            'tipo': resposta.teste.tipo,
+            'email': resposta.email,
+            'respostas': resposta.respostas,
+            'preview': resposta.resultado_preview,
+            'completo': resposta.resultado_completo,
+            'pago': resposta.pago
+        }
+        return render(request, 'resultado.html', {'resultado': resultado, 'config': config, 'resposta_id': resposta_id})
+    except Resposta.DoesNotExist:
+        # Fallback para session (compatibilidade)
+        resultado = request.session.get('ultimo_resultado', {})
+        if not resultado:
+            return redirect('testes:home')
+        config = TESTES_CONFIG.get(resultado['tipo'], {})
+        return render(request, 'resultado.html', {'resultado': resultado, 'config': config, 'resposta_id': resposta_id})
 
 def pagamento_view(request, resposta_id):
     from .models import Resposta
