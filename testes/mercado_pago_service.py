@@ -52,21 +52,34 @@ class MercadoPagoService:
                     "failure": f"{settings.MERCADO_PAGO_NOTIFICATION_URL}failure/",
                     "pending": f"{settings.MERCADO_PAGO_NOTIFICATION_URL}pending/"
                 },
-                "notification_url": settings.MERCADO_PAGO_NOTIFICATION_URL,
+                # Só incluir notification_url se não for o placeholder padrão
+                **({"notification_url": settings.MERCADO_PAGO_NOTIFICATION_URL} if not settings.MERCADO_PAGO_NOTIFICATION_URL.startswith('https://seu-dominio.com') else {}),
                 "external_reference": f"resposta_{resposta_id}",
-                "auto_return": "approved",
+                # Remover auto_return se as back_urls não forem URLs válidas
+                # "auto_return": "approved",
             }
             
             # Criar preferência
             response = self.sdk.preference().create(preference_data)
             
             logger.info(f"Preferência Mercado Pago criada: {response['response'].get('id')}")
+            logger.info(f"Response completo: {response}")
+            
+            # Para credenciais de teste, usar sandbox_init_point
+            init_point = response['response'].get('init_point')
+            sandbox_init_point = response['response'].get('sandbox_init_point')
+            
+            # Se estamos usando credenciais de teste, priorizar sandbox
+            if settings.MERCADO_PAGO_ACCESS_TOKEN.startswith('TEST-'):
+                checkout_url = sandbox_init_point or init_point
+            else:
+                checkout_url = init_point or sandbox_init_point
             
             return {
                 'success': True,
                 'preference_id': response['response'].get('id'),
-                'init_point': response['response'].get('init_point'),
-                'sandbox_init_point': response['response'].get('sandbox_init_point'),
+                'init_point': checkout_url,
+                'sandbox_init_point': sandbox_init_point,
             }
         except Exception as e:
             logger.error(f"Erro ao criar preferência Mercado Pago: {e}")

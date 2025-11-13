@@ -2026,15 +2026,28 @@ def pagamento_view(request, resposta_id):
         request.session['ultimo_resultado'] = resultado
         return render(request, 'resultado_completo.html', {'resultado': resultado, 'config': config})
     
-    # Gerar link de pagamento Mercado Pago
-    mp_service = MercadoPagoService()
-    mp_response = mp_service.criar_preferencia_pagamento(
-        resposta_id=resposta_id,
-        email=resposta.email,
-        teste_titulo=resposta.teste.titulo,
-        valor=resposta.payment_amount
-    )
+    # Processar POST do formulário
+    if request.method == 'POST':
+        # Gerar link de pagamento Mercado Pago
+        mp_service = MercadoPagoService()
+        mp_response = mp_service.criar_preferencia_pagamento(
+            resposta_id=resposta_id,
+            email=resposta.email,
+            teste_titulo=resposta.teste.titulo,
+            valor=resposta.payment_amount
+        )
+
+        if mp_response['success'] and mp_response.get('init_point'):
+            # Redirecionar para o checkout do Mercado Pago
+            return redirect(mp_response['init_point'])
+        else:
+            # Mostrar erro na página
+            error_msg = mp_response.get('error', 'Erro ao processar pagamento')
+            if not mp_response.get('init_point'):
+                error_msg = 'Erro: URL de pagamento não gerada. Verifique as credenciais do Mercado Pago.'
+            error = error_msg
     
+    # Para GET ou quando há erro, mostrar a página
     config = TESTES_CONFIG.get(resposta.teste.tipo, {})
     resultado = {
         'tipo': resposta.teste.tipo,
@@ -2050,9 +2063,7 @@ def pagamento_view(request, resposta_id):
         'config': config,
         'resposta_id': resposta_id,
         'preco': str(resposta.payment_amount).replace('.', ','),
-        'checkout_url': mp_response.get('init_point') if mp_response['success'] else None,
-        'sandbox_checkout_url': mp_response.get('sandbox_init_point') if mp_response['success'] else None,
-        'error': mp_response.get('error') if not mp_response['success'] else None,
+        'error': error if 'error' in locals() else None,
     }
     
     return render(request, 'pagamento.html', context)

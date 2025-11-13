@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+﻿{% extends 'base.html' %}
 
 {% block title %}Pagamento Seguro{% endblock %}
 
@@ -50,80 +50,71 @@
     color: #f56565;
     padding: 15px;
     border-radius: 10px;
-    margin-bottom: 20px;
-    border-left: 4px solid #f56565;
+    margin: 20px 0;
+    border: 1px solid rgba(245, 101, 101, 0.3);
+    text-align: center;
 }
 
-.success-message {
-    background: rgba(76, 175, 80, 0.2);
-    color: #48bb78;
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    border-left: 4px solid #48bb78;
+.payment-methods {
+    margin: 30px 0;
 }
 
-.checkout-button {
-    width: 100%;
-    padding: 25px;
-    font-size: 1.5rem;
-    margin-top: 30px;
-    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
-    color: #000;
+.btn-pagar {
+    background: linear-gradient(135deg, #ffd700, #ffb347);
+    color: #2d3748;
     border: none;
-    border-radius: 15px;
-    font-weight: bold;
+    border-radius: 10px;
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: transform 0.3s, box-shadow 0.3s;
-    animation: glow 2s ease-in-out infinite;
+    transition: all 0.3s ease;
+    margin: 20px auto;
+    display: block;
+    min-width: 200px;
 }
 
-.checkout-button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 30px rgba(255, 215, 0, 0.7);
+.btn-pagar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
 }
 
-.checkout-button:disabled {
+.btn-pagar:disabled {
     opacity: 0.6;
     cursor: not-allowed;
-    animation: none;
+    transform: none;
 }
 
 .security-badge {
-    text-align: center;
-    margin: 30px 0;
+    background: rgba(72, 187, 120, 0.2);
     padding: 20px;
-    background: rgba(255, 255, 255, 0.08);
     border-radius: 15px;
+    margin: 20px 0;
+    border: 2px solid rgba(72, 187, 120, 0.3);
+    text-align: center;
 }
 
 .guarantee {
-    text-align: center;
-    margin: 30px 0;
-    padding: 25px;
-    background: rgba(76, 175, 80, 0.2);
+    background: rgba(255, 215, 0, 0.2);
+    padding: 20px;
     border-radius: 15px;
-    border: 2px solid rgba(76, 175, 80, 0.5);
-}
-
-.guarantee h3 {
-    color: #4caf50;
-    margin-bottom: 10px;
-    font-size: 1.3rem;
+    margin: 20px 0;
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    text-align: center;
 }
 
 .back-link {
-    display: block;
-    text-align: center;
-    margin-top: 20px;
-    color: #fff;
+    display: inline-block;
+    color: #ffd700;
     text-decoration: none;
-    opacity: 0.8;
-    transition: opacity 0.3s ease;
+    margin-top: 20px;
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
 }
 
 .back-link:hover {
-    opacity: 1;
+    color: #ffb347;
+    text-decoration: underline;
 }
 
 @keyframes fadeIn {
@@ -136,87 +127,6 @@
         transform: translateY(0);
     }
 }
-
-@keyframes glow {
-    0%, 100% {
-        box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-    }
-    50% {
-        box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
-    }
-}
-{% endblock %}
-
-{% block content %}
-<div class="pagamento-container">
-    <div class="pagamento-card">
-        <div class="pagamento-header">
-            <h2>🔐 Finalizar Pagamento</h2>
-            <p>Complete seu pedido e receba seu relatório completo imediatamente</p>
-        </div>
-
-        {% if error %}
-        <div class="error-message">
-            ⚠️ Erro: {{ error }}
-        </div>
-        {% endif %}
-
-        <div class="price-display">
-            <p style="font-size: 1rem; margin-bottom: 10px; opacity: 0.7; text-decoration: line-through;">De R$ 49,90</p>
-            <p style="font-size: 1.1rem; margin-bottom: 10px; opacity: 0.9;">Oferta especial por tempo limitado</p>
-            <p class="valor">R$ {{ preco }}</p>
-            <p style="font-size: 0.9rem; margin-top: 10px; opacity: 0.8;">Acesso vitalício ao seu resultado completo</p>
-            <p style="font-size: 0.85rem; margin-top: 5px; color: #48bb78; font-weight: 600;">✓ Economia de 90% • Relatório de 2.500+ palavras</p>
-        </div>
-
-        <div class="security-badge">
-            <p><strong>🔒 Pagamento 100% Seguro</strong></p>
-            <p>Processado via Mercado Pago</p>
-            <p>Certificado SSL • Processamento Seguro</p>
-        </div>
-
-        <div style="background: rgba(66, 153, 225, 0.2); padding: 20px; border-radius: 15px; margin: 20px 0; border-left: 4px solid #4299e1;">
-            <p style="font-weight: 600; margin-bottom: 10px;">⚡ O que você recebe IMEDIATAMENTE após o pagamento:</p>
-            <p style="font-size: 0.95rem; opacity: 0.9; line-height: 1.6;">
-                ✓ Relatório completo de 2.500+ palavras<br>
-                ✓ Análise detalhada do seu perfil<br>
-                ✓ Plano de ação personalizado<br>
-                ✓ Lista de carreiras ideais para você<br>
-                ✓ Recomendações de livros e cursos<br>
-                ✓ Acesso para sempre (pode imprimir ou salvar em PDF)
-            </p>
-        </div>
-
-        <div class="guarantee">
-            <h3>✅ Garantia de 7 Dias</h3>
-            <p>Se não ficar 100% satisfeito, devolvemos seu dinheiro sem perguntas</p>
-            <p style="font-size: 0.9rem; margin-top: 10px; opacity: 0.9;">Taxa de satisfação: 98,4%</p>
-        </div>
-
-        {% if checkout_url %}
-        <a href="{{ checkout_url }}" class="checkout-button">
-            💳 Pagar com Mercado Pago
-        </a>
-        {% elif sandbox_checkout_url %}
-        <a href="{{ sandbox_checkout_url }}" class="checkout-button">
-            💳 Pagar (Modo Teste)
-        </a>
-        {% else %}
-        <button type="button" class="checkout-button" disabled style="opacity: 0.6;">
-            ⏳ Carregando checkout...
-        </button>
-        {% endif %}
-
-        <p style="text-align: center; font-size: 0.85rem; margin-top: 20px; opacity: 0.7;">
-            Ao finalizar, você concorda com nossos <a href="#" style="color: #ffd700;">Termos de Uso</a>
-        </p>
-
-        <a href="{% url 'testes:resultado' resposta_id %}" class="back-link">
-            ← Voltar ao resultado preview
-        </a>
-    </div>
-</div>
-{% endblock %}
 
 .payment-method {
     background: rgba(255, 255, 255, 0.1);
@@ -236,6 +146,11 @@
     transform: translateX(5px);
 }
 
+.payment-method.selected {
+    background: rgba(255, 215, 0, 0.2);
+    border-color: #ffd700;
+}
+
 .payment-method input[type="radio"] {
     margin-right: 15px;
     width: 20px;
@@ -248,73 +163,6 @@
     flex: 1;
     font-size: 1.1rem;
 }
-
-.payment-method.selected {
-    background: rgba(255, 215, 0, 0.2);
-    border-color: #ffd700;
-}
-
-.security-badge {
-    text-align: center;
-    margin: 30px 0;
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 15px;
-}
-
-.security-badge p {
-    font-size: 0.95rem;
-    opacity: 0.9;
-    margin: 5px 0;
-}
-
-.guarantee {
-    text-align: center;
-    margin: 30px 0;
-    padding: 25px;
-    background: rgba(76, 175, 80, 0.2);
-    border-radius: 15px;
-    border: 2px solid rgba(76, 175, 80, 0.5);
-}
-
-.guarantee h3 {
-    color: #4caf50;
-    margin-bottom: 10px;
-    font-size: 1.3rem;
-}
-
-.btn-pagar {
-    width: 100%;
-    padding: 25px;
-    font-size: 1.5rem;
-    margin-top: 30px;
-    animation: glow 2s ease-in-out infinite;
-}
-
-.back-link {
-    display: block;
-    text-align: center;
-    margin-top: 20px;
-    color: #fff;
-    text-decoration: none;
-    opacity: 0.8;
-    transition: opacity 0.3s ease;
-}
-
-.back-link:hover {
-    opacity: 1;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
 {% endblock %}
 
 {% block content %}
@@ -325,20 +173,26 @@
             <p>Complete seu pedido e receba seu relatório completo imediatamente</p>
         </div>
 
+        {% if error %}
+        <div class="error-message">
+            ⚠️ Erro: {{ error }}
+        </div>
+        {% endif %}
+
         <div class="price-display">
             <p style="font-size: 1rem; margin-bottom: 10px; opacity: 0.7; text-decoration: line-through;">De R$ 49,90</p>
             <p style="font-size: 1.1rem; margin-bottom: 10px; opacity: 0.9;">Oferta especial por tempo limitado</p>
-            <p class="valor">R$ 4,99</p>
+            <p class="valor">R$ {{ preco }}</p>
             <p style="font-size: 0.9rem; margin-top: 10px; opacity: 0.8;">Acesso vitalício ao seu resultado completo</p>
             <p style="font-size: 0.85rem; margin-top: 5px; color: #48bb78; font-weight: 600;">✓ Economia de 90% • Relatório de 2.500+ palavras</p>
         </div>
 
         <form method="POST" id="paymentForm">
             {% csrf_token %}
-            
+
             <div class="payment-methods">
                 <h3 style="color: #ffd700; margin-bottom: 20px; font-size: 1.3rem;">Escolha a forma de pagamento:</h3>
-                
+
                 <div class="payment-method" onclick="selectPayment(this)">
                     <input type="radio" name="payment_method" value="pix" id="pix" checked>
                     <label for="pix">
@@ -388,7 +242,7 @@
                 <p style="font-size: 0.9rem; margin-top: 10px; opacity: 0.9;">Nossa taxa de satisfação é de 98,4% - Você vai adorar!</p>
             </div>
 
-            <button type="submit" class="btn btn-pagar">
+            <button type="submit" class="btn-pagar">
                 🔓 Finalizar e Desbloquear Agora
             </button>
 
@@ -408,10 +262,10 @@
 function selectPayment(element) {
     const radio = element.querySelector('input[type="radio"]');
     radio.checked = true;
-    
+
     const methods = document.querySelectorAll('.payment-method');
     methods.forEach(method => method.classList.remove('selected'));
-    
+
     element.classList.add('selected');
 }
 
