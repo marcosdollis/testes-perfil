@@ -102,55 +102,6 @@
     50% { text-shadow: 0 0 40px rgba(255, 215, 0, 0.9); }
 }
 
-.blur-section {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
-    padding: 60px 40px;
-    margin: 40px 0;
-    border: 2px dashed rgba(255, 215, 0, 0.5);
-    text-align: center;
-    position: relative;
-}
-
-.blur-section::before {
-    content: '🔒';
-    font-size: 4rem;
-    display: block;
-    margin-bottom: 20px;
-    animation: bounce 2s infinite;
-}
-
-@keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-20px); }
-}
-
-.blur-section h3 {
-    font-size: 2rem;
-    color: #ffd700;
-    margin-bottom: 20px;
-    text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
-}
-
-.blur-section p {
-    font-size: 1.1rem;
-    margin-bottom: 30px;
-    opacity: 0.9;
-}
-
-.price-tag {
-    display: inline-block;
-    background: linear-gradient(135deg, #4299e1, #3182ce);
-    color: #fff;
-    padding: 15px 30px;
-    border-radius: 10px;
-    font-size: 2rem;
-    font-weight: bold;
-    margin: 20px 0;
-    box-shadow: 0 4px 20px rgba(66, 153, 225, 0.4);
-}
-
 .benefits {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
@@ -268,17 +219,6 @@
         <p>{{ resultado.preview }}</p>
     </div>
 
-    <div class="blur-section">
-        <h3>Desbloqueie Sua Revelação Completa</h3>
-        <p>Veja sua análise detalhada e completa...</p>
-        <p style="font-size: 1.2rem; color: #63b3ed;">
-            Apenas <span class="price-tag">R$ 4,99</span>
-        </p>
-        <p style="font-size: 0.95rem; opacity: 0.8; margin-top: 20px;">
-            Pagamento único • Acesso imediato • 100% seguro
-        </p>
-    </div>
-
     <div class="benefits">
         <h3>✨ O Que Você Receberá:</h3>
         <ul>
@@ -321,16 +261,16 @@
 
     <div class="cta-section">
         <p style="font-size: 1.4rem; margin-bottom: 20px; font-weight: 600;">
-            � Você investiu seu tempo respondendo 15 perguntas...
+            ✨ Seu Relatório Completo Está Pronto!
         </p>
         <p style="font-size: 1.2rem; margin-bottom: 30px; opacity: 0.9;">
-            Por apenas R$ 4,99 você terá acesso a um relatório profissional completo que pessoas pagam R$ 200+ em consultorias psicológicas
+            Clique abaixo para acessar sua análise profissional completa com mais de 2.500 palavras
         </p>
-        <a href="{% url 'testes:pagamento' resposta_id %}" class="btn">
+        <a href="{% url 'testes:resultado_completo' resposta_id %}" class="btn">
             🔓 Liberar Meu Relatório Completo Agora
         </a>
         <p style="font-size: 0.85rem; margin-top: 20px; opacity: 0.7;">
-            ⚡ Mais de 15.847 pessoas já investiram em autoconhecimento • Classificação 4.8/5.0
+            ⚡ Acesso imediato • Análise detalhada personalizada • Acesso vitalício
         </p>
     </div>
 </div>

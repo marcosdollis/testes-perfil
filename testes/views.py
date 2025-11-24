@@ -2002,6 +2002,26 @@ def resultado_view(request, resposta_id):
         config = TESTES_CONFIG.get(resultado['tipo'], {})
         return render(request, 'resultado.html', {'resultado': resultado, 'config': config, 'resposta_id': resposta_id})
 
+def resultado_completo_view(request, resposta_id):
+    """Renderizar página de resultado completo (sem pagamento)"""
+    from .models import Resposta
+    
+    try:
+        resposta = Resposta.objects.get(id=resposta_id)
+        config = TESTES_CONFIG.get(resposta.teste.tipo, {})
+        resultado = {
+            'tipo': resposta.teste.tipo,
+            'email': resposta.email,
+            'respostas': resposta.respostas,
+            'preview': resposta.resultado_preview,
+            'completo': resposta.resultado_completo,
+            'pago': True
+        }
+        request.session['ultimo_resultado'] = resultado
+        return render(request, 'resultado_completo.html', {'resultado': resultado, 'config': config})
+    except Resposta.DoesNotExist:
+        return redirect('testes:home')
+
 def pagamento_view(request, resposta_id):
     """View para processar pagamento via Mercado Pago"""
     from .models import Resposta

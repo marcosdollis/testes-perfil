@@ -15,6 +15,7 @@ urlpatterns = [
     path('teste/<str:tipo>/', views.teste_view, name='teste'),
     path('processar/<str:tipo>/', views.processar_teste, name='processar'),
     path('resultado/<int:resposta_id>/', views.resultado_view, name='resultado'),
+    path('resultado-completo/<int:resposta_id>/', views.resultado_completo_view, name='resultado_completo'),
     path('pagamento/<int:resposta_id>/', views.pagamento_view, name='pagamento'),
     path('pagamento/webhook/success/', views.webhook_success, name='webhook_success'),
     path('pagamento/webhook/failure/', views.webhook_failure, name='webhook_failure'),
