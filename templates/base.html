@@ -71,12 +71,32 @@
             text-align: center;
             padding: 40px 0;
             animation: fadeInDown 1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .header-logo {
+            width: 80px;
+            height: 80px;
+            flex-shrink: 0;
+        }
+
+        .header-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .header-content {
+            text-align: left;
         }
 
         .header h1 {
-            font-size: 2.5rem;
+            font-size: 2rem;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             color: #fff;
             font-weight: 700;
         }
@@ -172,8 +192,13 @@
 
     <div class="container">
         <div class="header">
-            <h1>Testes de Personalidade e Inteligência</h1>
-            <p>Descubra mais sobre você mesmo</p>
+            <div class="header-logo">
+                <img src="/static/logo.svg" alt="InsightMe Logo">
+            </div>
+            <div class="header-content">
+                <h1>InsightMe</h1>
+                <p>Descubra mais sobre você mesmo</p>
+            </div>
         </div>
 
         <div class="content">
